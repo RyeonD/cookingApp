@@ -3,70 +3,80 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="10dp"
+    android:layout_marginLeft="10dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginRight="10dp"
+    app:layout_gravity="start|top"
     tools:context=".MainActivity">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/title_name"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center|center_vertical"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|top"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:padding="15dp"
+        android:text="App Name"
+        android:textSize="30sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <LinearLayout
+    <Button
+        android:id="@+id/image_search_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_weight="1"
+        android:background="#98CCF4"
+        android:text="재료 이미지로 요리 검색"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title_name" />
+
+    <Button
+        android:id="@+id/info_page_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_weight="1"
+        android:background="#98CCF4"
+        android:text="내 재료-건강정보 보러가기"
+        android:textColor="#FFFFFF"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/image_search_btn"
+        app:layout_constraintTop_toBottomOf="@id/image_search_btn" />
+
+    <TextView
+        android:id="@+id/main_text1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="오늘의 요리 추천2"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/info_page_btn" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@id/main_text1">
+
+        <androidx.gridlayout.widget.GridLayout
+            android:id="@+id/cook_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp">
+            android:background="#EFEEEE"
+            app:columnCount="2">
 
-            <ImageButton
-                android:id="@+id/info_btn"
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/baseline_search_24"
-                tools:ignore="VectorDrawableCompat" />
+        </androidx.gridlayout.widget.GridLayout>
+    </ScrollView>
 
-            <TextView
-                android:id="@+id/title_name"
-                android:layout_width="wrap_content"
-                android:layout_height="56dp"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:text="App Name"
-                android:textSize="24sp" />
-
-            <ImageButton
-                android:id="@+id/search_btn"
-                android:layout_width="1dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                app:srcCompat="@drawable/baseline_search_24"
-                tools:ignore="VectorDrawableCompat" />
-
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/main_text1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="오늘의 요리 추천"
-            android:textSize="24sp" />
-
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <androidx.gridlayout.widget.GridLayout
-                android:id="@+id/cook_list"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:background="#EFEEEE"
-                app:columnCount="2">
-
-            </androidx.gridlayout.widget.GridLayout>
-        </ScrollView>
-
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

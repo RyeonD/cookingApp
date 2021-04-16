@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 
 import androidx.gridlayout.widget.GridLayout;
+
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -49,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // person info button click 동작
-        ImageButton infoBtn = findViewById(R.id.info_btn);
+        Button infoBtn = findViewById(R.id.info_page_btn);
         infoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -58,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // search button click 동작
-        ImageButton searchBtn = findViewById(R.id.search_btn);
+        Button searchBtn = findViewById(R.id.image_search_btn);
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
