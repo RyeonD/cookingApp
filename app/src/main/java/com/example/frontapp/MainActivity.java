@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity {
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
-                Toast.makeText(getApplicationContext(), "camera 클릭됨",Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(getApplicationContext(), CameraActivity.class);
                 startActivity(intent);
             }
