@@ -3,11 +3,10 @@ package com.example.frontapp;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.ImageFormat;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.SurfaceTexture;
-import android.hardware.Camera;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -18,16 +17,13 @@ import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
-import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Size;
 import android.view.Surface;
 import android.view.TextureView;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -38,6 +34,7 @@ import androidx.core.content.FileProvider;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.concurrent.Semaphore;
@@ -53,6 +50,7 @@ public class Preview extends Thread {
     private CaptureRequest.Builder mPreviewBuilder;
     private CameraCaptureSession mPreviewSession;
     private TextureView mTextureView;
+    private ImageReader mCaptureBuffer;
 
 
     public Preview(Context context, TextureView textureView) {
@@ -102,6 +100,7 @@ public class Preview extends Thread {
         } catch (CameraAccessException e) {
             e.printStackTrace();
         }
+
         Log.e(TAG, "open Camera X");
     }
 
@@ -177,7 +176,6 @@ public class Preview extends Thread {
             e.printStackTrace();
         }
         mPreviewBuilder.addTarget(surface);
-//        mPreviewBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
 
         try {
             mCameraDevice.createCaptureSession(Arrays.asList(surface), new CameraCaptureSession.StateCallback() {
@@ -215,13 +213,13 @@ public class Preview extends Thread {
     }
 
     // 카메라 다시 켜
-    public void setSurfaceTextureListener() {
-        mTextureView.setSurfaceTextureListener(mSurfaceTextureListener);
+    public void setSurfaceTextureListener(TextureView textureView) {
+        textureView.setSurfaceTextureListener(mSurfaceTextureListener);
     }
 
     public void onResume() {
         Log.d(TAG, "onResume");
-        setSurfaceTextureListener();
+        setSurfaceTextureListener(mTextureView);
     }
 
     private Semaphore mCameraOpenCloseLock = new Semaphore(1);
@@ -242,12 +240,17 @@ public class Preview extends Thread {
         }
     }
 
-    public static Intent takePicture() {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-//        File tempFile = createImageFile();
-//        Uri uri = Uri.fromFile(tempFile);
-        return intent;
+    public void takePicture() {
+
     }
 
+//    private ImageReader.OnImageAvailableListener mOnImageAvailableListener = new ImageReader.OnImageAvailableListener() {
+//        @Override
+//        public void onImageAvailable(ImageReader reader) {
+//            Image captureImage = reader.acquireNextImage();
+//
+//        }
+//    };
     // https://black-jin0427.tistory.com/120
+    // https://github.com/ykc415/AndroidCourse/blob/master/Camera2_SurfaceView-master/app/src/main/java/study/android/veryworks/com/customview_surfaceview_camera2/MainActivity.java
 }

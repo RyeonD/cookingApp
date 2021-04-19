@@ -19,7 +19,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:padding="15dp"
-        android:text="App Name"
+        android:text="YOBI"
         android:textSize="30sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

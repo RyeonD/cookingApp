@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.frontapp">
-
-<!--인터넷 연결 권한 허용-->
+    <!-- 인터넷 연결 권한 허용 -->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.CAMERA" />
-    <uses-permission android:name="android.permission.INTERNET" />
-<!--카메라 권한 허용-->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- 카메라 권한 허용 -->
     <uses-permission android:name="android.permission.CAMERA" />
-<!--카메라 사용 명시
-    required="true"는 카메라 필수-->
+    <!--
+카메라 사용 명시
+    required="true"는 카메라 필수
+    -->
     <uses-feature
         android:name="android.hardware.camera2"
-        android:required="true"/>
+        android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -24,6 +24,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity
+            android:name=".IngrediantManagementActivity"
+            android:label="@string/title_activity_ingrediant_management"
+            android:theme="@style/NoActionBar"></activity>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +35,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".CameraActivity"></activity>
+        <activity android:name=".CameraActivity" />
+        <activity android:name=".PhotoCheckActivity" />
+        <activity android:name=".PersonInfoActivity" />
     </application>
 
 </manifest>

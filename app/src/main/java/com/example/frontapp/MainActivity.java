@@ -13,7 +13,6 @@ import android.view.View;
 import androidx.gridlayout.widget.GridLayout;
 
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +33,7 @@ import java.util.Iterator;
 public class MainActivity extends AppCompatActivity {
     TextView mainText;
     GridLayout cookList;
-    Bitmap bitmap;
+    Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,21 +49,22 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        // person info button click 동작
-        Button infoBtn = findViewById(R.id.info_page_btn);
-        infoBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "info 클릭됨",Toast.LENGTH_LONG).show();
-            }
-        });
-
         // search button click 동작
         Button searchBtn = findViewById(R.id.image_search_btn);
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
-                Intent intent = new Intent(getApplicationContext(), CameraActivity.class);
+                intent = new Intent(getApplicationContext(), CameraActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        // person info button click 동작
+        Button infoBtn = findViewById(R.id.info_page_btn);
+        infoBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(getApplicationContext(), PersonInfoActivity.class);
                 startActivity(intent);
             }
         });
