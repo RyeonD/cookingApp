@@ -16,7 +16,7 @@ public class PersonInfoActivity extends AppCompatActivity {
     ImageView user_image;
     TextView user_name;
     TextView user_id;
-    TextView keep_ingredient;
+    TextView keep_grocery;
     TextView expiration_date;
     TextView allergy;
     TextView disease;
@@ -64,10 +64,11 @@ public class PersonInfoActivity extends AppCompatActivity {
         });
 
         // 재료 관리 페이지로
-        findViewById(R.id.ingrediant_manage_btn).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.grocery_manage_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "재료 관리 확인");
+                intent = new Intent(getApplicationContext(), GroceryManagementActivity.class);
+                startActivity(intent);
             }
         });
 
@@ -85,7 +86,7 @@ public class PersonInfoActivity extends AppCompatActivity {
         user_image = findViewById(R.id.user_info_image);
         user_name = findViewById(R.id.user_name);
         user_id = findViewById(R.id.user_id);
-        keep_ingredient = findViewById(R.id.ingrediant_keep);
+        keep_grocery = findViewById(R.id.grocery_keep);
         expiration_date = findViewById(R.id.expiration_date);
         allergy = findViewById(R.id.allergy);
         disease = findViewById(R.id.disease);
@@ -94,7 +95,7 @@ public class PersonInfoActivity extends AppCompatActivity {
         user_image.setImageResource(R.drawable.test_img);
         user_name.setText("나요비");
         user_id.setText("yobi@kmr.com");
-        keep_ingredient.setText("6");
+        keep_grocery.setText("6");
         expiration_date.setText("2");
         allergy.setText("3");
         disease.setText("2");

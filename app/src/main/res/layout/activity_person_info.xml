@@ -112,7 +112,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/user_ingrediant_layer"
+        android:id="@+id/user_grocery_layer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:padding="10dp"
@@ -121,7 +121,7 @@
         app:layout_constraintTop_toBottomOf="@+id/user_info_layer">
 
         <TextView
-            android:id="@+id/ingrediant_status_text"
+            android:id="@+id/grocery_status_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
@@ -133,17 +133,17 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <View
-            android:id="@+id/ingrediant_line"
+            android:id="@+id/grocery_line"
             android:layout_width="wrap_content"
             android:layout_height="2dp"
             android:layout_marginTop="8dp"
             android:background="#8B959E"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ingrediant_status_text" />
+            app:layout_constraintTop_toBottomOf="@+id/grocery_status_text" />
 
         <LinearLayout
-            android:id="@+id/ingrediant_info_layer"
+            android:id="@+id/grocery_info_layer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="horizontal"
@@ -151,10 +151,10 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ingrediant_line">
+            app:layout_constraintTop_toBottomOf="@+id/grocery_line">
 
             <LinearLayout
-                android:id="@+id/ingrediant_keep_layer"
+                android:id="@+id/grocery_keep_layer"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -173,7 +173,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/ingrediant_keep"
+                    android:id="@+id/grocery_keep"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -212,7 +212,7 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/ingrediant_manage_btn"
+                android:id="@+id/grocery_manage_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -229,7 +229,7 @@
         android:padding="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/user_ingrediant_layer">
+        app:layout_constraintTop_toBottomOf="@+id/user_grocery_layer">
 
         <TextView
             android:id="@+id/my_health_text"
