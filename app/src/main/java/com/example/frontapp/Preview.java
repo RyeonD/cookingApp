@@ -3,10 +3,13 @@ package com.example.frontapp;
 import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
+import android.graphics.drawable.GradientDrawable;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -14,16 +17,21 @@ import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
+import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
 import android.os.Build;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.util.Log;
 import android.util.Size;
+import android.view.Display;
 import android.view.Surface;
 import android.view.TextureView;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -33,17 +41,27 @@ import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.Semaphore;
+
+import static androidx.core.content.ContextCompat.startActivity;
 
 @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
 public class Preview extends Thread {
     // Log 출력 시 사용
     private final static String TAG = "Preview: ";
 
+    private CameraCharacteristics characteristics;
+    private StreamConfigurationMap map;
     private Size mPreviewSize;
     private Context mContext;
     private CameraDevice mCameraDevice;    // 카메라 기기
@@ -51,6 +69,9 @@ public class Preview extends Thread {
     private CameraCaptureSession mPreviewSession;
     private TextureView mTextureView;
     private ImageReader mCaptureBuffer;
+    private int mWidth;
+    private int mHeight;
+    private String today;
 
 
     public Preview(Context context, TextureView textureView) {
@@ -84,9 +105,9 @@ public class Preview extends Thread {
 
         try {
             String cameraId = getBackFacingCameraId(cameraManager);
-            CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraId);
+            characteristics = cameraManager.getCameraCharacteristics(cameraId);
             // get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP) : 해당 카메라의 각종 카메라 지원 정보들을 반환
-            StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
+            map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             // getOutputSizes() : 해당 카메라가 지원하는 크기 목록
             mPreviewSize = map.getOutputSizes(SurfaceTexture.class)[0];
 
@@ -240,17 +261,127 @@ public class Preview extends Thread {
         }
     }
 
-    public void takePicture() {
+    public void takePicture(Intent intent) {
+        today = todayDate();
+        if(null == mCameraDevice) {
+            Log.e(TAG,"mCameraDevice is null, return");
+            return;
+        }
 
+        try{
+            Size [] jpegSizes = null;
+            if(map != null){
+                jpegSizes = map.getOutputSizes(ImageFormat.JPEG);
+            }
+            mWidth = 640;
+            mHeight = 480;
+            if(jpegSizes != null && 0 < jpegSizes.length) {
+                mWidth = jpegSizes[0].getWidth();
+                mHeight = jpegSizes[0].getHeight();
+                Log.e("TAG", "width: "+mWidth+" / height: "+mHeight);
+            }
+
+            // ImageReader : surface에 랜더링된 이미지 데이터에 직접 액세스
+            ImageReader reader = ImageReader.newInstance(mWidth, mHeight, ImageFormat.JPEG, 1);
+            List<Surface> outputSurfaces = new ArrayList<Surface>();
+            // 사용 가능한 surface를 가져옴
+            outputSurfaces.add(reader.getSurface());
+            // new Surface 생성 - TextureView 안에 있는 surface로
+            outputSurfaces.add(new Surface(mTextureView.getSurfaceTexture()));
+
+            final CaptureRequest.Builder captureBuilder = mCameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
+            // 출력할 화면
+            captureBuilder.addTarget(reader.getSurface());
+            // 출력할 화면에 넣을 데이터
+            captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+
+            // Orientation
+            int rotation = ((Activity)mContext).getWindowManager().getDefaultDisplay().getRotation();
+            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, rotation);
+
+            ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
+                @Override
+                public void onImageAvailable(ImageReader reader) {
+
+                    Image image = null;
+                    try {
+                        image = reader.acquireLatestImage();
+                        ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+                        byte[] bytes = new byte[buffer.capacity()];
+                        buffer.get(bytes);
+                        save(bytes);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    } finally {
+                        if(image != null) {
+                            image.close();
+                            reader.close();
+                        }
+                    }
+                }
+
+                private void save(byte[] bytes) throws IOException {
+                    OutputStream output = null;
+                    try {
+                        Log.e(TAG, today);
+                        // 여기서 값을 가져와야 실행 되는디..
+//                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, output);
+
+                        // 파일 저장
+                        output = new FileOutputStream(Environment.getExternalStorageDirectory()+"/Pictures/image_"+today+".jpg");
+                        output.write(bytes);
+                    } finally {
+                        if(null != output) {
+                            output.close();
+                            Log.e(TAG,"완료");
+                        }
+                    }
+                }
+            };
+            HandlerThread thread = new HandlerThread("CameraPicture");
+            thread.start();
+            final Handler backgroudHandler = new Handler(thread.getLooper());
+            reader.setOnImageAvailableListener(readerListener, backgroudHandler);
+
+            final CameraCaptureSession.CaptureCallback captureListener = new CameraCaptureSession.CaptureCallback() {
+                @Override
+                public void onCaptureCompleted(CameraCaptureSession session,
+                                               CaptureRequest request, TotalCaptureResult result) {
+                    super.onCaptureCompleted(session, request, result);
+                    startPreview();
+                }
+
+            };
+
+            mCameraDevice.createCaptureSession(outputSurfaces, new CameraCaptureSession.StateCallback() {
+                @Override
+                public void onConfigured(CameraCaptureSession session) {
+                    try {
+                        session.capture(captureBuilder.build(), captureListener, backgroudHandler);
+                    } catch (CameraAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                @Override
+                public void onConfigureFailed(CameraCaptureSession session) {
+
+                }
+            }, backgroudHandler);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-//    private ImageReader.OnImageAvailableListener mOnImageAvailableListener = new ImageReader.OnImageAvailableListener() {
-//        @Override
-//        public void onImageAvailable(ImageReader reader) {
-//            Image captureImage = reader.acquireNextImage();
-//
-//        }
-//    };
-    // https://black-jin0427.tistory.com/120
-    // https://github.com/ykc415/AndroidCourse/blob/master/Camera2_SurfaceView-master/app/src/main/java/study/android/veryworks/com/customview_surfaceview_camera2/MainActivity.java
+    public String todayDate() {
+        long now = System.currentTimeMillis();
+        Date date = new Date(now);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd_HHmmss");
+
+        return dateFormat.format(date);
+    }
 }

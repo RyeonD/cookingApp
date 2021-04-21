@@ -48,18 +48,9 @@ public class CameraActivity extends AppCompatActivity {
         captureBtn.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-//                mPreview.onPause();
                 intent = new Intent(getApplicationContext(), PhotoCheckActivity.class);
+                mPreview.takePicture(intent);
                 startActivity(intent);
-            }
-        });
-
-        Button nextBtn = findViewById(R.id.next_btn);
-        nextBtn.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"다음으로...", Toast.LENGTH_LONG).show();
-                mPreview.onPause();
             }
         });
     }

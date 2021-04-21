@@ -2,14 +2,19 @@ package com.example.frontapp;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.gridlayout.widget.GridLayout;
 
 import android.widget.Button;
@@ -31,6 +36,7 @@ import java.net.URL;
 import java.util.Iterator;
 
 public class MainActivity extends AppCompatActivity {
+    private static String TAG = "MainActivity: ";
     TextView mainText;
     GridLayout cookList;
     Intent intent;
