@@ -17,6 +17,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.ByteBuffer;
+
+import static java.lang.Thread.sleep;
 
 public class PhotoCheckActivity extends AppCompatActivity {
 
@@ -24,13 +27,12 @@ public class PhotoCheckActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_check);
+        Log.e("확인", " 확인한다아아앙");
 
-//        Intent intent = getIntent();
-//        byte[] bytes = intent.getByteArrayExtra("groceryImg");
-//        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-//        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-//        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, outputStream);
+        Intent intent = getIntent();
+        Bitmap bitmap = (Bitmap) intent.getParcelableExtra("img");
+        ImageView imageView = findViewById(R.id.grocery_photo_image);
+        imageView.setImageBitmap(bitmap);
 
         // 다시 찍기
         Button captureBtn = findViewById(R.id.re_capture_btn);
