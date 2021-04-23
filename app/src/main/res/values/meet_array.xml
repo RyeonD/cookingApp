@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="meetArray">
-        <item>돼지고기</item>
-        <item>소고기</item>
-        <item>닭고기</item>
-    </string-array>
-</resources>

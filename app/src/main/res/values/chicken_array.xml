@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="chickenArray">
+        <item>부위 선택</item>
+        <item>닭한마리</item>
+        <item>닭가슴살</item>
+        <item>닭다리</item>
+        <item>닭날개</item>
+    </string-array>
+</resources>

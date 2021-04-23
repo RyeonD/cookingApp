@@ -9,11 +9,10 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.Spinner;
-import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
@@ -29,30 +28,40 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
+import java.nio.Buffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.zip.Inflater;
+import java.util.List;
+import java.util.Map;
 
 public class GroceryListInPhotoActivity extends AppCompatActivity {
     private static String TAG = "GroceryListInPhotoActivity: ";
-    TableLayout groceryTable;
-    Spinner spinner;
-    Intent intent;
+    private JSONObject jsonObject;
+    private LinearLayout groceryTable;
+    private int rowId = 0;
+    private Map <Integer, String> groceries = new HashMap<Integer, String>();
+    private Intent intent;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grocery_list_in_photo);
 
-//         json 파일 try-catch
-//        try {
-//            getPhotoResult();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        groceryTable = findViewById(R.id.scroll_view_add_layout);
 
-        // spinner 생성
-        makeSpinner();
+        // json 파일 try-catch
+        try {
+            jsonObject = getPhotoResult();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // 가져온 json 파일이 있다면 목록 출력
+        if(jsonObject != null) {
+            outputTable();
+        }
 
         // 목록 수정 버튼 클릭
         findViewById(R.id.grocery_list_in_photo_change_btn).setOnClickListener(new View.OnClickListener() {
@@ -67,12 +76,33 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "추천 레시피 목록");
+
+                boolean nextPageLoad = true;
+                String [] groceryList = new String[groceries.size()];
+                for(Integer i : groceries.keySet()) {
+                    if(groceries.get(i).contains("부위")){
+                        nextPageLoad = false;
+                        break;
+                    }
+                    else {
+                        groceryList[i] = groceries.get(i);
+                    }
+                }
+
+                if(nextPageLoad) {
+                    intent = new Intent(getApplicationContext(), MainGrocerySelectionActivity.class);
+                    intent.putExtra("groceryList", groceryList);
+                    startActivity(intent);
+                }
+                else {
+                    Log.e(TAG, "선택해주세요 알림 띄우자");
+                }
             }
         });
     }
 
     // AWS에서 가져온 json 파일에서 필요한 데이터 빼오기
-    private void getPhotoResult() throws IOException {
+    private JSONObject getPhotoResult() throws IOException {
         AssetManager assetManager = getAssets();
         String filename = "jsons/카메라인식결과.json";
 
@@ -90,44 +120,43 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
             }
 
             // json 객체 생성 및 파싱
-            JSONObject jsonObject = new JSONObject(buffer.toString());
-            Iterator<String> keys = jsonObject.keys();
-            groceryTable = findViewById(R.id.grocery_list_in_photo_table);
-            while (keys.hasNext()) {
-                String grocery_name = keys.next().toString();
-                int grocery_count = jsonObject.getInt(grocery_name);
-
-                // 목록 테이블에 삽입
-                outputTable(grocery_name, Integer.toString(grocery_count));
-            }
+            return  new JSONObject(buffer.toString());
         }
         catch (IOException | JSONException e) {
             e.printStackTrace();
         }
+        return null;
     }
 
-    // 가져온 데이터 출력
-    public void outputTable(String name, String cnt) {
-        TableRow tableRow = new TableRow(this);
-        TextView groceryName = new TextView(this);
-        TextView groceryCount = new TextView(this);
-        TextView etc = new TextView(this);
+    // 사진 속 식재료를 테이블로 출력
+    public void outputTable() {
+        Iterator<String> keys = jsonObject.keys();
+        while (keys.hasNext()) {
+            String grocery_name = keys.next().toString();
+            int grocery_count = 0;
+            try {
+                grocery_count = jsonObject.getInt(grocery_name);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
-        tableRow.setPadding(0,40,0,40);
-        tableRow.setGravity(Gravity.CENTER);
-        groceryName.setText(name);
-        textViewStyle(groceryName);
-        tableRow.addView(groceryName);
+            // 목록 테이블에 삽입 - 고기의 경우 스피너(드롭다운) 출력
+            if(grocery_name.contains("고기")) {
+                String meet = new String();
+                switch (grocery_name) {
+                    case "닭고기": meet = "닭고기"; break;
+                    case "소고기": meet = "소고기"; break;
+                    default: meet = "돼지고기"; break;
+                }
 
-        etc.setText("아아아아");    // 이 자리에 선택하는거 넣어야함
-        textViewStyle(etc); // d이거
-        tableRow.addView(etc); // 이거
-
-        groceryCount.setText(cnt);
-        textViewStyle(groceryCount);
-        tableRow.addView(groceryCount);
-
-        groceryTable.addView(tableRow);
+                for(int i = 0; i < grocery_count; i++)
+                    makeTableWithSpinner(meet, grocery_name, Integer.toString(grocery_count));
+            }
+            else {
+                makeTable(grocery_name, Integer.toString(grocery_count));
+                groceries.put(rowId++, grocery_name);
+            }
+        }
     }
 
     public void textViewStyle(TextView textView) {
@@ -136,21 +165,73 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
         textView.setTextColor(Color.BLACK);
     }
 
-    // spinner 생성
-    public void makeSpinner() {
+    // 가져온 데이터 출력
+    public void makeTable(String name, String cnt) {
+        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.no_meet_drop_down, null);
+
+        TextView nameTextView = view.findViewById(R.id.no_meet_name);
+        nameTextView.setText(name);
+        textViewStyle(nameTextView);
+
+        TextView noMeetTextView = view.findViewById(R.id.no_meet);
+        textViewStyle(noMeetTextView);
+
+        TextView countTextView = view.findViewById(R.id.no_meet_count);
+        countTextView.setText(cnt);
+        textViewStyle(countTextView);
+
+        groceryTable.addView(view);
+    }
+
+    // spinner와 데이터 출력
+    public void makeTableWithSpinner(String meetArray, String name, String count) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.meet_drop_down, null);
-        ConstraintLayout linearLayout = view.findViewById(R.id.meet_row);
-        spinner = linearLayout.findViewById(R.id.meet_spinner);
-        Log.e(TAG,"집1");
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.meetArray, android.R.layout.simple_dropdown_item_1line);
-        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-        Log.e(TAG,"집12");
-        spinner.setAdapter(adapter);
-        Log.e(TAG,"집123");
 
-        ConstraintLayout test = findViewById(R.id.linearLayout);
-        test.addView(view);
-        Log.e(TAG,"집1234");
+        TextView nameTextView = view.findViewById(R.id.meet_row_name);
+        nameTextView.setText(name);
+        textViewStyle(nameTextView);
+
+        Spinner spinner = view.findViewById(R.id.meet_row_spinner);
+        ArrayAdapter<CharSequence> adapter;
+        switch (meetArray){
+            case "닭고기":
+                adapter = ArrayAdapter.createFromResource(this, R.array.chickenArray, android.R.layout.simple_dropdown_item_1line);
+                break;
+            case "소고기" :
+                adapter = ArrayAdapter.createFromResource(this, R.array.beefArray, android.R.layout.simple_dropdown_item_1line);
+                break;
+            default:
+                adapter = ArrayAdapter.createFromResource(this, R.array.porkArray, android.R.layout.simple_dropdown_item_1line);
+                break;
+        }
+
+        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        spinner.setAdapter(adapter);
+        spinner.setSelection(0);
+
+        checkSpinner(rowId++, name, spinner);
+
+        groceryTable.addView(view);
     }
+
+    public void checkSpinner(int spinnerId, String name, Spinner spinner) {
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String item = parent.getItemAtPosition(position).toString();
+                groceries.put(spinnerId, name+" "+item);
+                if(item.contains("부위 선택"))
+                    spinner.setBackgroundColor(Color.rgb(255, 110, 110));
+                else
+                    spinner.setBackgroundColor(Color.rgb(255, 255, 255));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+    }
+
 }

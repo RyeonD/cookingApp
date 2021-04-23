@@ -22,7 +22,7 @@ import java.nio.ByteBuffer;
 import static java.lang.Thread.sleep;
 
 public class PhotoCheckActivity extends AppCompatActivity {
-
+    // 사용하지 않음
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -54,20 +54,22 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+//        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main_test);
 
-        mainText = findViewById(R.id.main_text1);
-        cookList = findViewById(R.id.cook_list);
-        try {
-            getRecipeData();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        // 메인 페이지 요리 추천 목록
+//        mainText = findViewById(R.id.main_text1);
+//        cookList = findViewById(R.id.cook_list);
+//        try {
+//            getRecipeData();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         permissionCheck();
 
         // search button click 동작
-        findViewById(R.id.image_search_btn).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.image_search_btn2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
                 Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -77,10 +79,11 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // person info button click 동작
-        findViewById(R.id.info_page_btn).setOnClickListener(new View.OnClickListener() {
+        // person info button click 동작 - 수정 필요
+        findViewById(R.id.info_page_btn2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                intent = new Intent(getApplicationContext(), GroceryListInPhotoActivity.class);
                 intent = new Intent(getApplicationContext(), PersonInfoActivity.class);
                 startActivity(intent);
             }
@@ -136,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
             Bundle imageBundle = data.getExtras();
             Bitmap imageBitmap = (Bitmap) imageBundle.get("data");
 
-            intent = new Intent(getApplicationContext(), PhotoCheckActivity.class);
+            intent = new Intent(getApplicationContext(), GroceryListInPhotoActivity.class);
             intent.putExtra("img", imageBitmap);
             startActivity(intent);
         }
@@ -196,8 +199,6 @@ public class MainActivity extends AppCompatActivity {
 //            bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
 //            imageView.setImageBitmap(bitmap);
             Glide.with(this).load(url).into(imageView);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }

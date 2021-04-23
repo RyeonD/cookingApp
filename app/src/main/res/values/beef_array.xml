@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="beefArray">
+        <item>부위 선택</item>
+        <item>국거리</item>
+        <item>다짐육</item>
+        <item>등심</item>
+        <item>부채살</item>
+        <item>불고기용</item>
+        <item>안심</item>
+    </string-array>
+</resources>
