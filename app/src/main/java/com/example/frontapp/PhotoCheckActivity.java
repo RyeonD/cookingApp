@@ -27,7 +27,6 @@ public class PhotoCheckActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_photo_check);
-        Log.e("확인", " 확인한다아아앙");
 
         Intent intent = getIntent();
         Bitmap bitmap = (Bitmap) intent.getParcelableExtra("img");

@@ -2,7 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/linearLayout6"
-    android:layout_width="200dp"
+    android:layout_width="300dp"
     android:layout_height="wrap_content"
     android:paddingLeft="15dp"
     android:paddingTop="15dp"
@@ -10,7 +10,7 @@
 
     <CheckBox
         android:id="@+id/checkBox"
-        android:layout_width="150dp"
+        android:layout_width="250dp"
         android:layout_height="40dp"
         android:gravity="center"
         android:text="CheckBox"

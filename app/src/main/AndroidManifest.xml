@@ -33,6 +33,8 @@
         <activity android:name=".GroceryManagementActivity" />
         <activity android:name=".GroceryListInPhotoActivity" />
         <activity android:name=".MainGrocerySelectionActivity" />
+        <activity android:name=".CookListActivity" />
+        <activity android:name=".CookInfoNGredient" />
     </application>
 
 </manifest>

@@ -183,9 +183,9 @@ public class MainActivity extends AppCompatActivity {
     public void cookAdd(String cook_name, String cook_img) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View cookView = inflater.inflate(R.layout.cook_info, null);
-        TextView name = cookView.findViewById(R.id.cook_name);
-        ImageView imageView = cookView.findViewById(R.id.imageButton);
-        name.setText(cook_name);
+//        TextView name = cookView.findViewById(R.id.cook_name);
+//        ImageView imageView = cookView.findViewById(R.id.imageButton);
+//        name.setText(cook_name);
 
         try {
             URL url = new URL(cook_img);
@@ -198,11 +198,11 @@ public class MainActivity extends AppCompatActivity {
 
 //            bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
 //            imageView.setImageBitmap(bitmap);
-            Glide.with(this).load(url).into(imageView);
+//            Glide.with(this).load(url).into(imageView);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+//        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         cookList.addView(cookView);
     }
 

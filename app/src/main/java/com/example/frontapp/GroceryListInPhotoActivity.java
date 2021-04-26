@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Dimension;
 import androidx.annotation.Nullable;
@@ -44,6 +45,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
     private Map <Integer, String> groceries = new HashMap<Integer, String>();
     private Intent intent;
 
+    // 재료 List 확인
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +70,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "목록 수정 버튼");
+                Toast.makeText(getApplicationContext(), "목록 수정 버튼 눌림", Toast.LENGTH_LONG).show();
             }
         });
 
@@ -75,7 +78,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
         findViewById(R.id.grocery_list_in_photo_search_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "추천 레시피 목록");
+                Toast.makeText(getApplicationContext(), "요리 검색 버튼 눌림", Toast.LENGTH_LONG).show();
 
                 boolean nextPageLoad = true;
                 String [] groceryList = new String[groceries.size()];
@@ -95,7 +98,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
                 else {
-                    Log.e(TAG, "선택해주세요 알림 띄우자");
+                    Toast.makeText(getApplicationContext(), "부위 선택 필요", Toast.LENGTH_LONG).show();
                 }
             }
         });
