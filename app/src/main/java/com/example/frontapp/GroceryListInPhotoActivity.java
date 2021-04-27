@@ -144,19 +144,13 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
         String s3_upload_file = saveBitmapToJpg(bitmap, fileName);
 
         uploadWithTransferUtility(s3_upload_file);
-        Log.e(TAG, "s3 upload finish");
-        File storage = getCacheDir();  //  path = /data/user/0/YOUR_PACKAGE_NAME/cache
-        File file = new File(storage, fileName);
-        file.delete();
 
         Response.Listener<String> responseListener = new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 try {
-                    Log.e(TAG, "요청 응답");
                     jsonObject = new JSONObject( response );
                     boolean success = jsonObject.getBoolean( "success" );
-                    Log.e(TAG, "요청 응답 완료");
                     if(success) {//로그인 성공시
                         // json 파일 try-catch
 //                        try {
@@ -169,6 +163,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
                         if(jsonObject != null) {
                             outputTable();
                         }
+                        imgFile.delete();
 
                     } else {//실패시
                         Toast.makeText( getApplicationContext(), "이미지 분석에 실패했습니다.", Toast.LENGTH_SHORT ).show();
@@ -183,7 +178,6 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
         GroceryPhotoModelRequest groceryphotomodelrequest = new GroceryPhotoModelRequest(s3_upload_file, responseListener );
         RequestQueue queue = Volley.newRequestQueue( GroceryListInPhotoActivity.this );
         queue.add( groceryphotomodelrequest );
-        Log.e(TAG, "queue add");
 
         // 목록 수정 버튼 클릭
         findViewById(R.id.grocery_list_in_photo_change_btn).setOnClickListener(new View.OnClickListener() {

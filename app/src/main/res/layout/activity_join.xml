@@ -10,12 +10,12 @@
         android:id="@+id/join_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
         android:layout_marginBottom="20dp"
         android:ems="10"
         android:hint="이름"
         android:inputType="textPersonName"
-        app:layout_constraintBottom_toTopOf="@+id/join_email"
+        app:layout_constraintBottom_toTopOf="@+id/radioGroup"
         app:layout_constraintEnd_toEndOf="@+id/check_button" />
 
     <TextView
@@ -37,7 +37,7 @@
         android:id="@+id/join_id"
         android:layout_width="152dp"
         android:layout_height="50dp"
-        android:layout_marginEnd="4dp"
+        android:layout_marginRight="4dp"
         android:layout_marginBottom="20dp"
         android:ems="10"
         android:inputType="textPersonName"
@@ -50,19 +50,21 @@
         android:id="@+id/join_email"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="16dp"
         android:ems="10"
         android:hint="이메일"
         android:inputType="textEmailAddress"
         app:layout_constraintBottom_toTopOf="@+id/join_password"
-        app:layout_constraintStart_toStartOf="@+id/join_name" />
+        app:layout_constraintStart_toStartOf="@+id/radioGroup"
+        app:layout_constraintTop_toBottomOf="@+id/radioGroup" />
 
     <Button
         android:id="@+id/delete"
         style="@style/defaultButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="28dp"
+        android:layout_marginLeft="28dp"
         android:layout_marginTop="20dp"
         android:text="취소"
         app:layout_constraintStart_toEndOf="@+id/join_button"
@@ -106,7 +108,7 @@
         style="@style/defaultButton"
         android:layout_width="60dp"
         android:layout_height="50dp"
-        android:layout_marginEnd="96dp"
+        android:layout_marginRight="96dp"
         android:text="확인"
         app:layout_constraintBaseline_toBaselineOf="@+id/join_id"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -128,9 +130,39 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="100dp"
+        android:layout_marginLeft="100dp"
         android:text="가입"
         app:layout_constraintBaseline_toBaselineOf="@+id/delete"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <RadioGroup
+        android:id="@+id/radioGroup"
+        android:layout_width="120dp"
+        android:layout_height="30dp"
+        android:orientation="horizontal"
+        tools:layout_editor_absoluteX="96dp"
+        tools:layout_editor_absoluteY="271dp">
+
+        <RadioButton
+            android:id="@+id/radioMale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="남"
+            app:layout_constraintBaseline_toBaselineOf="@+id/radioFemale"
+            app:layout_constraintStart_toStartOf="@+id/join_name"
+            android:onClick="onRadioButtonClicked"/>
+
+        <RadioButton
+            android:id="@+id/radioFemale"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginLeft="12dp"
+            android:text="여"
+            app:layout_constraintStart_toEndOf="@+id/radioMale"
+            app:layout_constraintTop_toBottomOf="@+id/join_name"
+            android:onClick="onRadioButtonClicked"/>
+    </RadioGroup>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

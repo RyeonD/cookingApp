@@ -6,6 +6,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -22,7 +24,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     private static String TAG = "RegisterActivity";
     private EditText join_email, join_password, join_name, join_pwck, join_address, join_phone, join_id;
-    private Button join_button, check_button, delete_button;
+    private Button join_button, check_button, delete_button, radioGender;
     private AlertDialog dialog;
     private boolean validate = false;
 
@@ -90,7 +92,21 @@ public class RegisterActivity extends AppCompatActivity {
             }
         });
 
+        RadioGroup genderType = findViewById(R.id.radioGroup);
 
+        //라디오버튼 체크시 이벤트
+        genderType.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+
+                if(checkedId == R.id.radioMale) {
+                    radioGender = findViewById(R.id.radioMale);
+                }
+                else if(checkedId == R.id.radioFemale) {
+                    radioGender = findViewById(R.id.radioFemale);
+                }
+            }
+        });
 
         //회원가입 버튼 클릭 시 수행
         join_button = findViewById( R.id.join_button );
@@ -106,6 +122,7 @@ public class RegisterActivity extends AppCompatActivity {
                 final String Address = join_address.getText().toString();
                 final String Phone = join_phone.getText().toString();
                 final String UserId = join_id.getText().toString();
+                final String Gender = radioGender.getText().toString();
 
                 //아이디 중복체크 했는지 확인
                 if (!validate) {
@@ -161,7 +178,7 @@ public class RegisterActivity extends AppCompatActivity {
                 };
 
                 //서버로 Volley를 이용해서 요청
-                RegisterRequest registerRequest = new RegisterRequest( UserId, UserEmail, UserPwd, UserName, Address, Phone, responseListener);
+                RegisterRequest registerRequest = new RegisterRequest( UserId, UserEmail, UserPwd, UserName, Address, Phone, Gender, responseListener);
                 Log.e(TAG, "리퀘스트 생성");
                 RequestQueue queue = Volley.newRequestQueue( RegisterActivity.this );
                 Log.e(TAG, "리퀘스트 요청");

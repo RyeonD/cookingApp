@@ -13,41 +13,42 @@
         android:layout_height="wrap_content"
         android:text="로그인"
         app:layout_constraintBaseline_toBaselineOf="@+id/join_button"
-        app:layout_constraintStart_toStartOf="@+id/login_password" />
+        app:layout_constraintStart_toStartOf="@+id/auto_login" />
+
 
     <EditText
         android:id="@+id/login_id"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="41dp"
+        android:layout_marginBottom="40dp"
         android:ems="10"
         android:hint="아이디"
         android:inputType="textPersonName"
         app:layout_constraintBottom_toTopOf="@+id/login_password"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/login_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="41dp"
+        android:layout_marginBottom="40dp"
         android:ems="10"
         android:hint="비밀번호"
         android:inputType="textPassword"
-        app:layout_constraintBottom_toTopOf="@+id/login_button"
+        app:layout_constraintBottom_toTopOf="@+id/auto_login"
         app:layout_constraintStart_toStartOf="@+id/login_id" />
 
     <ImageView
         android:id="@+id/imageView3"
         android:layout_width="55dp"
         android:layout_height="55dp"
-        android:layout_marginBottom="41dp"
-        app:tint="@color/colorAccent"
+        android:layout_marginBottom="40dp"
         app:layout_constraintBottom_toTopOf="@+id/login_id"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
+        app:layout_constraintStart_toStartOf="parent"
+        app:tint="@color/colorAccent" />
 
     <Button
         android:id="@+id/join_button"
@@ -58,5 +59,15 @@
         android:text="가입"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/login_password" />
+
+    <CheckBox
+        android:id="@+id/auto_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="40dp"
+
+        android:text="자동로그인"
+        app:layout_constraintBottom_toTopOf="@+id/login_button"
+        app:layout_constraintStart_toStartOf="@+id/login_password" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

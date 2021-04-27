@@ -17,14 +17,14 @@ public class RegisterRequest extends StringRequest {
     private Map<String, String> info_map;
     //private Map<String, String>parameters;
 
-    public RegisterRequest(String UserId, String UserEmail, String UserPwd, String UserName, String Address, String Phone, Response.Listener<String> listener) {
+    public RegisterRequest(String UserId, String UserEmail, String UserPwd, String UserName, String Address, String Phone, String Gender, Response.Listener<String> listener) {
         super(Method.POST, URL, listener, null);
 
         info_map = new HashMap<>();
         info_map.put("phone", Phone);
         info_map.put("email", UserEmail);
         info_map.put("address", Address);
-        info_map.put("gender", "남");
+        info_map.put("gender", Gender);
         JSONObject json = new JSONObject(info_map);
         map = new HashMap<>();
         map.put("user_id", UserId);
