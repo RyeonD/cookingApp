@@ -3,10 +3,7 @@ package com.example.frontapp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.media.Image;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
@@ -18,7 +15,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -134,15 +130,18 @@ public class CookListActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 JSONObject cookInfo = imageMap.get(imageView.getId());
-                intent = new Intent(getApplicationContext(), CookInfoNGredient.class);
-                try {
-                    intent.putExtra("name", cookInfo.getString("name").toString());
-                    intent.putExtra("img", cookInfo.getString("img").toString());
-//                    intent.putExtra("ingredient", cookInfo.getString("ingredient").toString());
-//                    intent.putExtra("recipe", cookInfo.getString("recipe").toString());
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                intent = new Intent(getApplicationContext(), CookInfoPageActivity.class);
+                Iterator iterator = cookInfo.keys();
+
+                while(iterator.hasNext()) {
+                    try {
+                        String name = iterator.next().toString();
+                        intent.putExtra(name, cookInfo.getString(name).toString());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
                 }
+
                 startActivity(intent);
             }
         });

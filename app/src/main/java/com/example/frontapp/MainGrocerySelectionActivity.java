@@ -87,7 +87,7 @@ public class MainGrocerySelectionActivity extends AppCompatActivity {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainGrocerySelectionActivity.this)
                 .setTitle("알림");
 
-        if(!mainList.isEmpty()) {
+        if(mainList != null) {
             alertBuilder.setMessage(s+"\""+mainList+"\"")
             .setPositiveButton("레시피 검색", new DialogInterface.OnClickListener() {
                 @Override
