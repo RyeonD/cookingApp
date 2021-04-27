@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
             Bitmap imageBitmap = (Bitmap) imageBundle.get("data");
 
             intent = new Intent(getApplicationContext(), GroceryListInPhotoActivity.class);
-            intent.putExtra("img", imageBitmap);
+            intent.putExtra( "img", imageBitmap);
             startActivity(intent);
         }
     }
