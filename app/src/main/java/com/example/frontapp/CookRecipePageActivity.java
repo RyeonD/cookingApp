@@ -53,6 +53,7 @@ public class CookRecipePageActivity extends AppCompatActivity {
         // 받아온 데이터 출력
         outputRecipe();
 
+        // 좌우 슬라이드 - 추후 구현 예정
 //        detector = new GestureDetector(this, new GestureDetector.OnGestureListener() {
 //            @Override
 //            public boolean onDown(MotionEvent e) {
@@ -98,6 +99,14 @@ public class CookRecipePageActivity extends AppCompatActivity {
 //                return true;
 //            }
 //        });
+
+        // 뒤로가기 버튼 클릭 시 동작
+        findViewById(R.id.recipe_back_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
     }
 
     // intent 안 데이터 가져오기
@@ -151,4 +160,6 @@ public class CookRecipePageActivity extends AppCompatActivity {
 
         insertRecipe.addView(view);
     }
+
+    // 영상 삽입
 }

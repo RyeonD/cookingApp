@@ -1,6 +1,7 @@
 package com.example.frontapp;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Color;
@@ -19,6 +20,7 @@ import android.widget.Toast;
 
 import androidx.annotation.Dimension;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
@@ -74,12 +76,12 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
             }
         });
 
-        // NEXT 추천 레시피 목록 출력
+        // NEXT 버튼 클릭(주재료 선택 페이지로 이동)
         findViewById(R.id.grocery_list_in_photo_search_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "요리 검색 버튼 눌림", Toast.LENGTH_LONG).show();
 
+                // 부위가 선택되었는지 확인(선택되었으면 다음페이지로 이동. 선택되지 않았으면 알림 띄우고, 선택 유도)
                 boolean nextPageLoad = true;
                 String [] groceryList = new String[groceries.size()];
                 for(Integer i : groceries.keySet()) {
@@ -92,13 +94,15 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
                     }
                 }
 
+                // 부위 선택됨 - 다음 페이지로 이동
                 if(nextPageLoad) {
                     intent = new Intent(getApplicationContext(), MainGrocerySelectionActivity.class);
                     intent.putExtra("groceryList", groceryList);
                     startActivity(intent);
                 }
+                // 부위 선택되지 않음 - 선택 유도 알림창 띄움
                 else {
-                    Toast.makeText(getApplicationContext(), "부위 선택 필요", Toast.LENGTH_LONG).show();
+                    showDialog();
                 }
             }
         });
@@ -168,7 +172,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
         textView.setTextColor(Color.BLACK);
     }
 
-    // 가져온 데이터 출력
+    // 가져온 데이터(재료 목록) 출력
     public void makeTable(String name, String cnt) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.no_meet_drop_down, null);
@@ -180,14 +184,10 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
         TextView noMeetTextView = view.findViewById(R.id.no_meet);
         textViewStyle(noMeetTextView);
 
-        TextView countTextView = view.findViewById(R.id.no_meet_count);
-        countTextView.setText(cnt);
-        textViewStyle(countTextView);
-
         groceryTable.addView(view);
     }
 
-    // spinner와 데이터 출력
+    // spinner(드롭다운) 설정
     public void makeTableWithSpinner(String meetArray, String name, String count) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.meet_drop_down, null);
@@ -219,6 +219,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
         groceryTable.addView(view);
     }
 
+    // 드롭 다운 선택시 배경 변경 - "부위 선택"(선택하지 않음)=red, "부위 선택" 외(부위 선택됨)=white
     public void checkSpinner(int spinnerId, String name, Spinner spinner) {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -228,7 +229,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
                 if(item.contains("부위 선택"))
                     spinner.setBackgroundColor(Color.rgb(255, 110, 110));
                 else
-                    spinner.setBackgroundColor(Color.rgb(255, 255, 255));
+                    spinner.setBackgroundColor(Color.argb(0, 255, 255, 255));
             }
 
             @Override
@@ -237,4 +238,20 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
         });
     }
 
+    // 알림창
+    // 알림창
+    public void showDialog() {
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(GroceryListInPhotoActivity.this)
+                .setTitle("알림")
+                .setMessage("고기 부위가 선택되지 않았습니다. 부위를 선택해주세요.")
+                .setNegativeButton("확인", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.e(TAG, "다시 선택");
+                    }
+                });
+
+        AlertDialog alert = alertBuilder.create();
+        alert.show();
+    }
 }

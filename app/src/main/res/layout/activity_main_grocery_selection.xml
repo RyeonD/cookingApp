@@ -33,52 +33,61 @@
 
     </LinearLayout>
 
-    <TableLayout
-        android:id="@+id/grocery_selection_title_layout"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="12dp"
-        android:layout_marginEnd="12dp"
-        android:layout_marginRight="12dp"
-        android:stretchColumns="*"
-        app:layout_constraintEnd_toStartOf="@+id/grocery_selection_scroll_view"
+        android:paddingLeft="13dp"
+        android:paddingTop="7dp"
+        android:paddingRight="13dp"
+        android:paddingBottom="7dp"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/grocery_selection_layout">
 
-        <TableRow
-            android:id="@+id/grocery_selection_title_row"
+        <LinearLayout
+            android:id="@+id/linearLayout12"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="50dp"
             android:background="#E8E5E5"
             android:gravity="center"
-            android:padding="13dp">
+            android:orientation="horizontal"
+            android:padding="7dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:id="@+id/grocery_selection_title"
-                android:layout_width="match_parent"
+                android:id="@+id/grocery_list_in_photo_title"
+                android:layout_width="170dp"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center"
+                android:gravity="center"
                 android:text="재료"
                 android:textColor="#000000"
-                android:textSize="18sp" />
+                android:textSize="18sp"
+                tools:layout_conversion_absoluteHeight="24dp"
+                tools:layout_conversion_absoluteWidth="411dp"
+                tools:layout_editor_absoluteX="0dp"
+                tools:layout_editor_absoluteY="70dp" />
 
-        </TableRow>
-    </TableLayout>
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView
         android:id="@+id/grocery_selection_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/grocery_selection_btn_box"
-        app:layout_constraintTop_toBottomOf="@+id/grocery_selection_title_layout"
-        app:layout_constraintVertical_bias="0.016"
-        tools:layout_editor_absoluteX="12dp">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout3">
 
         <LinearLayout
             android:id="@+id/scroll_view_add_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"/>
+            android:orientation="vertical" />
     </ScrollView>
 
     <LinearLayout
@@ -131,4 +140,5 @@
             android:textSize="18sp"></Button>
 
     </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

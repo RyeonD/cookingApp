@@ -7,10 +7,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
-    <!--
-카메라 사용 명시
-    required="true"는 카메라 필수
-    -->
+    <!--카메라 사용 명시 required="true"는 카메라 필수-->
     <uses-feature
         android:name="android.hardware.camera2"
         android:required="true" />
