@@ -87,16 +87,16 @@ public class MainGrocerySelectionActivity extends AppCompatActivity {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainGrocerySelectionActivity.this)
                 .setTitle("알림");
 
-        if(!mainList.isEmpty()) {
+        if(mainList != null) {
             alertBuilder.setMessage(s+"\""+mainList+"\"")
-            .setPositiveButton("레시피 검색", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(getApplicationContext(), CookListActivity.class);
-                    intent.putExtra("mainList", mainList);
-                    startActivity(intent);
-                }
-            }).setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    .setPositiveButton("레시피 검색", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Intent intent = new Intent(getApplicationContext(), CookListActivity.class);
+                            intent.putExtra("mainList", mainList);
+                            startActivity(intent);
+                        }
+                    }).setNegativeButton("취소", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Log.e(TAG, "취소할꺼임");
@@ -105,12 +105,12 @@ public class MainGrocerySelectionActivity extends AppCompatActivity {
         }
         else {
             alertBuilder.setMessage(s)
-                .setNegativeButton("확인", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.e(TAG, "다시 선택");
-                    }
-                });
+                    .setNegativeButton("확인", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Log.e(TAG, "다시 선택");
+                        }
+                    });
         }
 
         AlertDialog alert = alertBuilder.create();

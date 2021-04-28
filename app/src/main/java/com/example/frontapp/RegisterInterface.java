@@ -9,7 +9,7 @@ import retrofit2.http.POST;
 
 public interface RegisterInterface
 {
-    String REGIST_URL = "http://e43959c95006.ngrok.io/";
+    String REGIST_URL = "http://a7c6ab7c81d8.ngrok.io/";
 
     @FormUrlEncoded
     @POST("test/user/")

@@ -13,7 +13,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -29,6 +31,14 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class CookListActivity extends AppCompatActivity {
     private static String TAG = "CookListActivity";
@@ -48,10 +58,56 @@ public class CookListActivity extends AppCompatActivity {
 
         intent = getIntent();
         String mainList = intent.getStringExtra("mainList");
+        Log.e(TAG, "mainlist");
 
         // 검색 결과 페이지 상단에 주재료 보여줌
         TextView textView = findViewById(R.id.main_grocery_list);
         textView.setText(mainList);
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(1, TimeUnit.MINUTES)
+                .readTimeout(1, TimeUnit.MINUTES)
+                .writeTimeout(1, TimeUnit.MINUTES)
+                .build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(CookListInterface.REGIST_URL)
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .client(okHttpClient)
+                .build();
+        CookListInterface api = retrofit.create(CookListInterface.class);
+        Call<String> call = api.getRecipe(mainList);
+        call.enqueue(new Callback<String>()
+        {
+            @Override
+            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response)
+            {
+                if (response.isSuccessful() && response.body() != null)
+                {
+                    Log.e("onSuccess", response.body());
+
+                    String jsonResponse = response.body();
+                    try {
+                        JSONObject jsonObject = new JSONObject( jsonResponse );
+
+                        if (jsonObject.getString("success").equals("true")) {
+                            System.out.println(jsonObject.toString());
+                        } else {
+
+                        }
+
+                    } catch (JSONException e) {
+                        Log.e(TAG, "로그 없음");
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t)
+            {
+                Log.e(TAG, "에러 = " + t.getMessage());
+            }
+        });
 
         // 요리 리스트 출력
         cookList = findViewById(R.id.scroll_view_layout);
