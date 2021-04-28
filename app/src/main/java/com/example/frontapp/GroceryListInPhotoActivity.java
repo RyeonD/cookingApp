@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Dimension;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -31,9 +32,6 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.regions.Region;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,6 +49,14 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class GroceryListInPhotoActivity extends AppCompatActivity {
     private static String TAG = "GroceryListInPhotoActivity: ";
@@ -127,6 +133,29 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
             }
         });
     }
+
+    private void parseModelData(String response)
+    {
+        try
+        {
+            jsonObject = new JSONObject(response);
+            if (jsonObject.getString("success").equals("true"))
+            {
+                if(jsonObject != null) {
+                    outputTable();
+                }
+                imgFile.delete();
+
+            } else {//실패시
+                Toast.makeText( getApplicationContext(), "이미지 분석에 실패했습니다.", Toast.LENGTH_SHORT ).show();
+                return;
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+    }
     // 재료 List 확인
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -145,39 +174,38 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
 
         uploadWithTransferUtility(s3_upload_file);
 
-        Response.Listener<String> responseListener = new Response.Listener<String>() {
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(1, TimeUnit.MINUTES)
+                .readTimeout(1, TimeUnit.MINUTES)
+                .writeTimeout(1, TimeUnit.MINUTES)
+                .build();
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(GroceryPhotoModelInterface.Model_URL)
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .client(okHttpClient)
+                .build();
+        GroceryPhotoModelInterface api = retrofit.create(GroceryPhotoModelInterface.class);
+        Call<String> call = api.getModelResult("sagemaker-deploy-test", s3_upload_file);
+        call.enqueue(new Callback<String>()
+        {
             @Override
-            public void onResponse(String response) {
-                try {
-                    jsonObject = new JSONObject( response );
-                    boolean success = jsonObject.getBoolean( "success" );
-                    if(success) {//로그인 성공시
-                        // json 파일 try-catch
-//                        try {
-//                            jsonObject = getPhotoResult();
-//                        } catch (IOException e) {
-//                            e.printStackTrace();
-//                        }
+            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response)
+            {
+                if (response.isSuccessful() && response.body() != null)
+                {
+                    Log.e("onSuccess", response.body());
 
-                        // 가져온 json 파일이 있다면 목록 출력
-                        if(jsonObject != null) {
-                            outputTable();
-                        }
-                        imgFile.delete();
-
-                    } else {//실패시
-                        Toast.makeText( getApplicationContext(), "이미지 분석에 실패했습니다.", Toast.LENGTH_SHORT ).show();
-                        return;
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                    String jsonResponse = response.body();
+                    parseModelData(jsonResponse);
                 }
             }
-        };
-        GroceryPhotoModelRequest groceryphotomodelrequest = new GroceryPhotoModelRequest(s3_upload_file, responseListener );
-        RequestQueue queue = Volley.newRequestQueue( GroceryListInPhotoActivity.this );
-        queue.add( groceryphotomodelrequest );
+
+            @Override
+            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t)
+            {
+                Log.e(TAG, "에러 = " + t.getMessage());
+            }
+        });
 
         // 목록 수정 버튼 클릭
         findViewById(R.id.grocery_list_in_photo_change_btn).setOnClickListener(new View.OnClickListener() {

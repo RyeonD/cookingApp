@@ -10,15 +10,23 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.toolbox.Volley;
-
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -60,35 +68,57 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                Response.Listener<String> responseListener = new Response.Listener<String>() {
+                OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                        .connectTimeout(1, TimeUnit.MINUTES)
+                        .readTimeout(1, TimeUnit.MINUTES)
+                        .writeTimeout(1, TimeUnit.MINUTES)
+                        .build();
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(ValidateInterface.REGIST_URL)
+                        .addConverterFactory(ScalarsConverterFactory.create())
+                        .client(okHttpClient)
+                        .build();
+                ValidateInterface api = retrofit.create(ValidateInterface.class);
+                Call<String> call = api.getUserValidate(UserId);
+                call.enqueue(new Callback<String>()
+                {
                     @Override
-                    public void onResponse(String response) {
-                        try {
+                    public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response)
+                    {
+                        if (response.isSuccessful() && response.body() != null)
+                        {
+                            Log.e("onSuccess", response.body());
 
-                            JSONObject jsonResponse = new JSONObject(response);
-                            boolean success = jsonResponse.getBoolean("success");
+                            String jsonResponse = response.body();
+                            try {
+                                JSONObject jsonObject = new JSONObject( jsonResponse );
+                                //회원가입 성공시
+                                if (jsonObject.getString("success").equals("true")) {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
+                                    dialog = builder.setMessage("사용할 수 있는 아이디입니다.").setPositiveButton("확인", null).create();
+                                    dialog.show();
+                                    join_id.setEnabled(false); //아이디값 고정
+                                    validate = true; //검증 완료
+                                    check_button.setBackgroundColor(getResources().getColor(R.color.colorGray));
+                                } else {
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
+                                    dialog = builder.setMessage("이미 존재하는 아이디입니다.").setNegativeButton("확인", null).create();
+                                    dialog.show();
+                                }
 
-                            if (success) {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
-                                dialog = builder.setMessage("사용할 수 있는 아이디입니다.").setPositiveButton("확인", null).create();
-                                dialog.show();
-                                join_id.setEnabled(false); //아이디값 고정
-                                validate = true; //검증 완료
-                                check_button.setBackgroundColor(getResources().getColor(R.color.colorGray));
+                            } catch (JSONException e) {
+                                Log.e(TAG, "로그 없음");
+                                e.printStackTrace();
                             }
-                            else {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
-                                dialog = builder.setMessage("이미 존재하는 아이디입니다.").setNegativeButton("확인", null).create();
-                                dialog.show();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
                     }
-                };
-                ValidateRequest validateRequest = new ValidateRequest(UserId, responseListener);
-                RequestQueue queue = Volley.newRequestQueue(RegisterActivity.this);
-                queue.add(validateRequest);
+
+                    @Override
+                    public void onFailure(@NonNull Call<String> call, @NonNull Throwable t)
+                    {
+                        Log.e(TAG, "에러 = " + t.getMessage());
+                    }
+                });
             }
         });
 
@@ -124,6 +154,13 @@ public class RegisterActivity extends AppCompatActivity {
                 final String UserId = join_id.getText().toString();
                 final String Gender = radioGender.getText().toString();
 
+                Map<String, String> info_map = new HashMap<>();
+                info_map.put("phone", Phone);
+                info_map.put("email", UserEmail);
+                info_map.put("address", Address);
+                info_map.put("gender", Gender);
+                JSONObject UserInfo = new JSONObject(info_map);
+
                 //아이디 중복체크 했는지 확인
                 if (!validate) {
                     AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
@@ -140,49 +177,38 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                Response.Listener<String> responseListener = new Response.Listener<String>() {
+                OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                        .connectTimeout(1, TimeUnit.MINUTES)
+                        .readTimeout(1, TimeUnit.MINUTES)
+                        .writeTimeout(1, TimeUnit.MINUTES)
+                        .build();
+                Retrofit retrofit = new Retrofit.Builder()
+                        .baseUrl(RegisterInterface.REGIST_URL)
+                        .addConverterFactory(ScalarsConverterFactory.create())
+                        .client(okHttpClient)
+                        .build();
+                RegisterInterface api = retrofit.create(RegisterInterface.class);
+                Call<String> call = api.getUserRegist(UserId, UserPwd, UserName, UserInfo);
+                call.enqueue(new Callback<String>()
+                {
                     @Override
-                    public void onResponse(String response) {
+                    public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response)
+                    {
+                        if (response.isSuccessful() && response.body() != null)
+                        {
+                            Log.e("onSuccess", response.body());
 
-                        try {
-                            JSONObject jsonObject = new JSONObject( response );
-                            boolean success = jsonObject.getBoolean( "success" );
-                            System.out.println(success);
-                            //회원가입 성공시
-                            if(UserPwd.equals(PassCk)) {
-                                if (success) {
-                                    Log.e(TAG, "회원가입 성공");
-                                    Toast.makeText(getApplicationContext(), String.format("%s님 가입을 환영합니다.", UserName), Toast.LENGTH_SHORT).show();
-                                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
-                                    startActivity(intent);
-
-                                    //회원가입 실패시
-                                } else {
-                                    Log.e(TAG, "회원가입 실패");
-                                    Toast.makeText(getApplicationContext(), "회원가입에 실패하였습니다.", Toast.LENGTH_SHORT).show();
-                                    return;
-                                }
-                            } else {
-                                AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
-                                dialog = builder.setMessage("비밀번호가 동일하지 않습니다.").setNegativeButton("확인", null).create();
-                                dialog.show();
-                                return;
-                            }
-
-                        } catch (JSONException e) {
-                            Log.e(TAG, "로그 없음");
-                            e.printStackTrace();
+                            String jsonResponse = response.body();
+                            parseRegisterData(jsonResponse, UserPwd, PassCk, UserName);
                         }
-
                     }
-                };
 
-                //서버로 Volley를 이용해서 요청
-                RegisterRequest registerRequest = new RegisterRequest( UserId, UserEmail, UserPwd, UserName, Address, Phone, Gender, responseListener);
-                Log.e(TAG, "리퀘스트 생성");
-                RequestQueue queue = Volley.newRequestQueue( RegisterActivity.this );
-                Log.e(TAG, "리퀘스트 요청");
-                queue.add( registerRequest );
+                    @Override
+                    public void onFailure(@NonNull Call<String> call, @NonNull Throwable t)
+                    {
+                        Log.e(TAG, "에러 = " + t.getMessage());
+                    }
+                });
             }
         });
         delete_button = findViewById( R.id.delete );
@@ -193,5 +219,37 @@ public class RegisterActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+    }
+    private void parseRegisterData(String response,  String UserPwd, String PassCk, String UserName)
+    {
+        try {
+            JSONObject jsonObject = new JSONObject( response );
+            boolean success = jsonObject.getBoolean( "success" );
+            //회원가입 성공시
+            if(UserPwd.equals(PassCk)) {
+                if (jsonObject.getString("success").equals("true")) {
+                    Log.e(TAG, "회원가입 성공");
+                    Toast.makeText(getApplicationContext(), String.format("%s님 가입을 환영합니다.", UserName), Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
+                    startActivity(intent);
+
+                    //회원가입 실패시
+                } else {
+                    Log.e(TAG, "회원가입 실패");
+                    Toast.makeText(getApplicationContext(), "회원가입에 실패하였습니다.", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+            } else {
+                AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
+                dialog = builder.setMessage("비밀번호가 동일하지 않습니다.").setNegativeButton("확인", null).create();
+                dialog.show();
+                return;
+            }
+
+        } catch (JSONException e) {
+            Log.e(TAG, "로그 없음");
+            e.printStackTrace();
+        }
+
     }
 }

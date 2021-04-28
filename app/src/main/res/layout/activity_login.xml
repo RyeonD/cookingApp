@@ -65,8 +65,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="40dp"
-
-        android:text="자동로그인"
+        android:text="자동 로그인"
         app:layout_constraintBottom_toTopOf="@+id/login_button"
         app:layout_constraintStart_toStartOf="@+id/login_password" />
 
