@@ -57,6 +57,7 @@ public class CookListActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        // 뒤로 가기 버튼
         findViewById(R.id.back_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -100,12 +101,16 @@ public class CookListActivity extends AppCompatActivity {
     // 요리 목록 출력
     public void cookAdd(JSONObject cookObject) throws JSONException {
         try {
+            // json객체에서 요리 이름과 이미지 가져와 변수에 정의
             cook_name = cookObject.getString("name");
             cook_img = cookObject.getString("imagelink");
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
+        // 요리 목록 출력
+        // 요리 이름과 이미지 출력할 레이아웃 가져와 각각의 데이터 삽입
+        // 데이터가 삽입된 레이아웃을 해당 화면 레이아웃에 추가
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View cookView = inflater.inflate(R.layout.cook_info, null);
         TextView name = cookView.findViewById(R.id.textView);
@@ -121,22 +126,26 @@ public class CookListActivity extends AppCompatActivity {
         }
         imageView.setScaleType(ImageView.ScaleType.FIT_XY);
 
+        // 요리 이미지 클릭 시 요리 정보가 담긴 json 객체를 넘겨주기 위해 Hashmap에 삽입
         imageMap.put(cntId, cookObject);
         imageView.setId(cntId++);
 
         cookList.addView(cookView);
 
+        // 요리 이미지 클릭 시
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // 클릭한 요리 이미지에 맞는 정보를 Hashmap에서 id(key값)로 가져옴
                 JSONObject cookInfo = imageMap.get(imageView.getId());
                 intent = new Intent(getApplicationContext(), CookInfoPageActivity.class);
                 Iterator iterator = cookInfo.keys();
 
+                // 가져온 요리 정보를 다음에 올 페이지(액티비티)로 보내기 위해 intent에 넣음
                 while(iterator.hasNext()) {
                     try {
-                        String name = iterator.next().toString();
-                        intent.putExtra(name, cookInfo.getString(name).toString());
+                        String info = iterator.next().toString();
+                        intent.putExtra(info, cookInfo.getString(info).toString());
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }

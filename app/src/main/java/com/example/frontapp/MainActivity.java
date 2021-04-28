@@ -66,9 +66,10 @@ public class MainActivity extends AppCompatActivity {
 //            e.printStackTrace();
 //        }
 
+        // 카메라 권한 확인 및 권한 부여
         permissionCheck();
 
-        // search button click 동작
+        // search button click 동작 - 카메라 실행
         findViewById(R.id.image_search_btn2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
@@ -108,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // 권한 확인
+    // 사용자가 부여한 권한 확인
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -130,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // 촬영한 사진 가져오기
+    // 촬영한 사진 가져와 다음에 올 페이지(액티비티)로 전달
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -145,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // 이 아래 코드들은 현재 사용 안함 - 요리 추천 리스트가 필요할 시 사용할 예정. 아니면 삭제해야됨.
     // 레시피 가져와 파싱
     private void getRecipeData() throws IOException {
         AssetManager assetManager = getAssets();
