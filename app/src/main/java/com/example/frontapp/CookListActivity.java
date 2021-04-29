@@ -3,19 +3,19 @@ package com.example.frontapp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.media.Image;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -45,6 +45,7 @@ public class CookListActivity extends AppCompatActivity {
     private LinearLayout cookList;
     private Intent intent;
     private int cntId = 100;
+    private JSONArray jsonArray;
     HashMap <Integer, JSONObject> imageMap = new HashMap<Integer, JSONObject>();
     String cook_name;
     String cook_img;
@@ -57,27 +58,19 @@ public class CookListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cook_list);
 
         intent = getIntent();
-        String mainList = intent.getStringExtra("mainList");
-        Log.e(TAG, "mainlist");
+        String[] ingredientList = intent.getStringArrayExtra("ingredientList");
+        Log.e(TAG, "ingredientList");
 
         // 검색 결과 페이지 상단에 주재료 보여줌
         TextView textView = findViewById(R.id.main_grocery_list);
-        textView.setText(mainList);
+        textView.setText(ingredientList[1]);
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(1, TimeUnit.MINUTES)
-                .readTimeout(1, TimeUnit.MINUTES)
-                .writeTimeout(1, TimeUnit.MINUTES)
-                .build();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(CookListInterface.REGIST_URL)
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .client(okHttpClient)
-                .build();
-        CookListInterface api = retrofit.create(CookListInterface.class);
-        Call<String> call = api.getRecipe(mainList);
+        RetrofitClass retrofitClass = new RetrofitClass();
+        CookListInterface api = retrofitClass.retrofit.create(CookListInterface.class);
+        Call<String> call = api.getRecipe(ingredientList[0], ingredientList[1]);
         call.enqueue(new Callback<String>()
         {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
             @Override
             public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response)
             {
@@ -90,9 +83,17 @@ public class CookListActivity extends AppCompatActivity {
                         JSONObject jsonObject = new JSONObject( jsonResponse );
 
                         if (jsonObject.getString("success").equals("true")) {
-                            System.out.println(jsonObject.toString());
+                            jsonArray = jsonObject.getJSONArray("recipe_list");
+                            // 요리 리스트 출력
+                            cookList = findViewById(R.id.scroll_view_layout);
+                            try {
+                                getRecipeData();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         } else {
-
+                            Toast.makeText( getApplicationContext(), "레시피 가져오기에 실패했습니다.", Toast.LENGTH_SHORT ).show();
+                            return;
                         }
 
                     } catch (JSONException e) {
@@ -109,13 +110,7 @@ public class CookListActivity extends AppCompatActivity {
             }
         });
 
-        // 요리 리스트 출력
-        cookList = findViewById(R.id.scroll_view_layout);
-        try {
-            getRecipeData();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+
 
         findViewById(R.id.back_btn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -127,32 +122,35 @@ public class CookListActivity extends AppCompatActivity {
 
     // 레시피 가져와 파싱
     private void getRecipeData() throws IOException {
-        AssetManager assetManager = getAssets();
-        String filename = "jsons/감자전.json";
-
-        // 파일 가져오기
+//        AssetManager assetManager = getAssets();
+//        String filename = "jsons/gamjajeon.json";
+//
+//        // 파일 가져오기
+//        try {
+//            InputStream data = assetManager.open("jsons/gamjajeon.json");
+//            InputStreamReader dataReader = new InputStreamReader(data);
+//            BufferedReader reader = new BufferedReader(dataReader);
+//
+//            StringBuffer buffer = new StringBuffer();
+//            String line = reader.readLine();
+//            while (line != null) {
+//                buffer.append(line + "\n");
+//                line = reader.readLine();
+//            }
         try {
-            InputStream data = assetManager.open("jsons/감자전.json");
-            InputStreamReader dataReader = new InputStreamReader(data);
-            BufferedReader reader = new BufferedReader(dataReader);
-
-            StringBuffer buffer = new StringBuffer();
-            String line = reader.readLine();
-            while (line != null) {
-                buffer.append(line + "\n");
-                line = reader.readLine();
-            }
-
             // json 객체 생성 및 파싱
-            JSONObject jsonObject = new JSONObject(buffer.toString());
-            Iterator i = jsonObject.keys();
-            while(i.hasNext()){
-                JSONObject cook = jsonObject.getJSONObject(i.next().toString());
+
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject cook = (JSONObject) jsonArray.get(i);
                 cookAdd(cook);
             }
+//            while(i.hasNext()){
+//                JSONObject cook = jsonObject.getJSONObject(i.next().toString());
+//                cookAdd(cook);
+//            }
 
         }
-        catch (IOException | JSONException e) {
+        catch (JSONException e) {
             e.printStackTrace();
         }
     }

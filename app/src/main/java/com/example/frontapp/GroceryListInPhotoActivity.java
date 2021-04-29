@@ -38,7 +38,6 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -174,17 +173,8 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
 
         uploadWithTransferUtility(s3_upload_file);
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(1, TimeUnit.MINUTES)
-                .readTimeout(1, TimeUnit.MINUTES)
-                .writeTimeout(1, TimeUnit.MINUTES)
-                .build();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(GroceryPhotoModelInterface.Model_URL)
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .client(okHttpClient)
-                .build();
-        GroceryPhotoModelInterface api = retrofit.create(GroceryPhotoModelInterface.class);
+        RetrofitClass retrofitClass = new RetrofitClass();
+        GroceryListInPhotoInterface api = retrofitClass.retrofit.create(GroceryListInPhotoInterface.class);
         Call<String> call = api.getModelResult("sagemaker-deploy-test", s3_upload_file);
         call.enqueue(new Callback<String>()
         {
@@ -249,7 +239,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
     // AWS에서 가져온 json 파일에서 필요한 데이터 빼오기
     private JSONObject getPhotoResult() throws IOException {
         AssetManager assetManager = getAssets();
-        String filename = "jsons/카메라인식결과.json";
+        String filename = "jsons/camera.json";
 
         // 파일 가져오기
         try {

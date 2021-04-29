@@ -21,12 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -68,17 +65,8 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                        .connectTimeout(1, TimeUnit.MINUTES)
-                        .readTimeout(1, TimeUnit.MINUTES)
-                        .writeTimeout(1, TimeUnit.MINUTES)
-                        .build();
-                Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl(ValidateInterface.REGIST_URL)
-                        .addConverterFactory(ScalarsConverterFactory.create())
-                        .client(okHttpClient)
-                        .build();
-                ValidateInterface api = retrofit.create(ValidateInterface.class);
+                RetrofitClass retrofitClass = new RetrofitClass();
+                ValidateInterface api = retrofitClass.retrofit.create(ValidateInterface.class);
                 Call<String> call = api.getUserValidate(UserId);
                 call.enqueue(new Callback<String>()
                 {
@@ -177,17 +165,8 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                        .connectTimeout(1, TimeUnit.MINUTES)
-                        .readTimeout(1, TimeUnit.MINUTES)
-                        .writeTimeout(1, TimeUnit.MINUTES)
-                        .build();
-                Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl(RegisterInterface.REGIST_URL)
-                        .addConverterFactory(ScalarsConverterFactory.create())
-                        .client(okHttpClient)
-                        .build();
-                RegisterInterface api = retrofit.create(RegisterInterface.class);
+                RetrofitClass retrofitClass = new RetrofitClass();
+                RegisterInterface api = retrofitClass.retrofit.create(RegisterInterface.class);
                 Call<String> call = api.getUserRegist(UserId, UserPwd, UserName, UserInfo);
                 call.enqueue(new Callback<String>()
                 {

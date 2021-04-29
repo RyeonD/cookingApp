@@ -20,12 +20,8 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.gridlayout.widget.GridLayout;
 
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,7 +30,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -148,11 +143,11 @@ public class MainActivity extends AppCompatActivity {
     // 레시피 가져와 파싱
     private void getRecipeData() throws IOException {
         AssetManager assetManager = getAssets();
-        String filename = "jsons/감자전.json";
+        String filename = "jsons/gamjajeon.json";
 
         // 파일 가져오기
         try {
-            InputStream data = assetManager.open("jsons/감자전.json");
+            InputStream data = assetManager.open("jsons/gamjajeon.json");
             InputStreamReader dataReader = new InputStreamReader(data);
             BufferedReader reader = new BufferedReader(dataReader);
 

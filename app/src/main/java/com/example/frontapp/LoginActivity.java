@@ -88,17 +88,8 @@ public class LoginActivity extends AppCompatActivity {
                 String UserId = login_id.getText().toString();
                 String UserPwd = login_password.getText().toString();
 
-                OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                        .connectTimeout(1, TimeUnit.MINUTES)
-                        .readTimeout(1, TimeUnit.MINUTES)
-                        .writeTimeout(1, TimeUnit.MINUTES)
-                        .build();
-                Retrofit retrofit = new Retrofit.Builder()
-                        .baseUrl(LoginInterface.LOGIN_URL)
-                        .addConverterFactory(ScalarsConverterFactory.create())
-                        .client(okHttpClient)
-                        .build();
-                LoginInterface api = retrofit.create(LoginInterface.class);
+                RetrofitClass retrofitClass = new RetrofitClass();
+                LoginInterface api = retrofitClass.retrofit.create(LoginInterface.class);
                 Call<String> call = api.getUserLogin(UserId, UserPwd);
                 call.enqueue(new Callback<String>()
                 {
