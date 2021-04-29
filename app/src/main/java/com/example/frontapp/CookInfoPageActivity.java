@@ -1,15 +1,22 @@
 package com.example.frontapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import androidx.annotation.ContentView;
 import androidx.annotation.Nullable;
@@ -25,7 +32,6 @@ import java.util.regex.Pattern;
 
 public class CookInfoPageActivity extends AppCompatActivity {
     private static String TAG = "AppCompatActivity";
-    GestureDetector detector;
 
     private Intent intent;
     private String name;
@@ -34,7 +40,7 @@ public class CookInfoPageActivity extends AppCompatActivity {
     private String recipe;
     private String recipe_imagelink;
     private String youtubelink;
-    private ViewPager2 cook_info_viewpager;
+    private LinearLayout videoLinearLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,62 +50,18 @@ public class CookInfoPageActivity extends AppCompatActivity {
         Log.e(TAG, "성공");
         intent = getIntent();
 
-        // 요리 정보들 가져
+        // 요리 정보들 가져옴
         getCookInfo(intent);
 
         // 요리 정보 출력
         outputCookInfo();
 
-        // 화면 전환
-//        detector = new GestureDetector(this, new GestureDetector.OnGestureListener() {
-//            @Override
-//            public boolean onDown(MotionEvent e) {
-//                return false;
-//            }
-//
-//            @Override
-//            public void onShowPress(MotionEvent e) {
-//
-//            }
-//
-//            @Override
-//            public boolean onSingleTapUp(MotionEvent e) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-//                Log.e(TAG, Float.toString(distanceX)+" / "+Float.toString(distanceY));
-//                if(distanceX > 0) {
-//                    intent = new Intent(getApplicationContext(), CookRecipePageActivity.class);
-//                    startActivity(intent);
-//                    overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.fade_in);
-//                }
-//
-//                return true;
-//            }
-//
-//            @Override
-//            public void onLongPress(MotionEvent e) {
-//
-//            }
-//
-//            @Override
-//            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-//                return false;
-//            }
-//        });
-//
-//        View view = findViewById(R.id.linearLayout9);
-//        view.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                detector.onTouchEvent(event);
-//                return true;
-//            }
-//        });
+        // 비디오 출력
+        videoLinearLayout = findViewById(R.id.video_linearlayout);
+        String [] videoUrlList = youtubelink.replaceAll("[\\\\|\\[|\\]|\"]","").replace(","," ").split(" ");
+        for(String url : videoUrlList)
+            outputVideo(url);
 
-        // 레시피 보기
         findViewById(R.id.recipe_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -174,4 +136,20 @@ public class CookInfoPageActivity extends AppCompatActivity {
         groceries.setText(ingredient);
     }
 
+    // 비디오 출력
+    private void outputVideo(String url) {
+        LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View videoLayoutView = layoutInflater.inflate(R.layout.video_layout, null, false);
+        ImageView imageView = videoLayoutView.findViewById(R.id.video_image);
+
+        videoLinearLayout.addView(videoLayoutView);
+
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                startActivity(intent);
+            }
+        });
+    }
 }
