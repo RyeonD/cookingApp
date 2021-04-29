@@ -13,8 +13,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +22,6 @@ import androidx.annotation.Dimension;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -31,12 +30,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Array;
-import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 public class GroceryListInPhotoActivity extends AppCompatActivity {
@@ -46,6 +42,9 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
     private int rowId = 0;
     private Map <Integer, String> groceries = new HashMap<Integer, String>();
     private Intent intent;
+    ArrayList<GroceryList> arrayList;
+    GroceryListAdapter adapter;
+    private String [] groceryList;
 
     // 재료 List 확인
     @Override
@@ -80,27 +79,14 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
         findViewById(R.id.grocery_list_in_photo_search_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                groceryList = adapter.getNext();    // 부위 선택 완료: 재료 목록(String Array), 부위 선택 미완료: null
 
-                // 부위가 선택되었는지 확인(선택되었으면 다음페이지로 이동. 선택되지 않았으면 알림 띄우고, 선택 유도)
-                boolean nextPageLoad = true;
-                String [] groceryList = new String[groceries.size()];
-                for(Integer i : groceries.keySet()) {
-                    if(groceries.get(i).contains("부위")){
-                        nextPageLoad = false;
-                        break;
-                    }
-                    else {
-                        groceryList[i] = groceries.get(i);
-                    }
-                }
-
-                // 부위 선택됨 - 다음 페이지로 이동
-                if(nextPageLoad) {
+                // 부위 선택이 완료되었는지 확인
+                if(groceryList != null) {
                     intent = new Intent(getApplicationContext(), MainGrocerySelectionActivity.class);
                     intent.putExtra("groceryList", groceryList);
                     startActivity(intent);
                 }
-                // 부위 선택되지 않음 - 선택 유도 알림창 띄움
                 else {
                     showDialog();
                 }
@@ -111,7 +97,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
     // AWS에서 가져온 json 파일에서 필요한 데이터 빼오기
     private JSONObject getPhotoResult() throws IOException {
         AssetManager assetManager = getAssets();
-        String filename = "jsons/카메라인식결과.json";
+        String filename = "jsons/cameraResult.json";
 
         // 파일 가져오기
         try {
@@ -137,109 +123,22 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
 
     // 사진 속 식재료를 테이블로 출력
     public void outputTable() {
-        Iterator<String> keys = jsonObject.keys();
-        while (keys.hasNext()) {
-            String grocery_name = keys.next().toString();
-            int grocery_count = 0;
-            try {
-                grocery_count = jsonObject.getInt(grocery_name);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+        arrayList = new ArrayList<>();
 
-            // 목록 테이블에 삽입 - 고기의 경우 스피너(드롭다운) 출력
-            if(grocery_name.contains("고기")) {
-                String meet = new String();
-                switch (grocery_name) {
-                    case "닭고기": meet = "닭고기"; break;
-                    case "소고기": meet = "소고기"; break;
-                    default: meet = "돼지고기"; break;
-                }
-
-                for(int i = 0; i < grocery_count; i++)
-                    makeTableWithSpinner(meet, grocery_name, Integer.toString(grocery_count));
-            }
-            else {
-                makeTable(grocery_name, Integer.toString(grocery_count));
-                groceries.put(rowId++, grocery_name);
-            }
-        }
-    }
-
-    public void textViewStyle(TextView textView) {
-        textView.setGravity(Gravity.CENTER);
-        textView.setTextSize(Dimension.SP, 17);
-        textView.setTextColor(Color.BLACK);
-    }
-
-    // 가져온 데이터(재료 목록) 출력
-    public void makeTable(String name, String cnt) {
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.no_meet_drop_down, null);
-
-        TextView nameTextView = view.findViewById(R.id.no_meet_name);
-        nameTextView.setText(name);
-        textViewStyle(nameTextView);
-
-        TextView noMeetTextView = view.findViewById(R.id.no_meet);
-        textViewStyle(noMeetTextView);
-
-        groceryTable.addView(view);
-    }
-
-    // spinner(드롭다운) 설정
-    public void makeTableWithSpinner(String meetArray, String name, String count) {
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.meet_drop_down, null);
-
-        TextView nameTextView = view.findViewById(R.id.meet_row_name);
-        nameTextView.setText(name);
-        textViewStyle(nameTextView);
-
-        Spinner spinner = view.findViewById(R.id.meet_row_spinner);
-        ArrayAdapter<CharSequence> adapter;
-        switch (meetArray){
-            case "닭고기":
-                adapter = ArrayAdapter.createFromResource(this, R.array.chickenArray, android.R.layout.simple_dropdown_item_1line);
-                break;
-            case "소고기" :
-                adapter = ArrayAdapter.createFromResource(this, R.array.beefArray, android.R.layout.simple_dropdown_item_1line);
-                break;
-            default:
-                adapter = ArrayAdapter.createFromResource(this, R.array.porkArray, android.R.layout.simple_dropdown_item_1line);
-                break;
+        Iterator iterator = jsonObject.keys();
+        while(iterator.hasNext()) {
+            String s = iterator.next().toString();
+            arrayList.add(new GroceryList(s));
         }
 
-        adapter.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
-        spinner.setAdapter(adapter);
-        spinner.setSelection(0);
+        // Adapter 생성
+        adapter = new GroceryListAdapter(arrayList);
 
-        checkSpinner(rowId++, name, spinner);
-
-        groceryTable.addView(view);
+        ListView listView = findViewById(R.id.grocery_table_layout);
+        listView.setAdapter(adapter);
     }
 
-    // 드롭 다운 선택시 배경 변경 - "부위 선택"(선택하지 않음)=red, "부위 선택" 외(부위 선택됨)=white
-    public void checkSpinner(int spinnerId, String name, Spinner spinner) {
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String item = parent.getItemAtPosition(position).toString();
-                groceries.put(spinnerId, name+" "+item);
-                if(item.contains("부위 선택"))
-                    spinner.setBackgroundColor(Color.rgb(255, 110, 110));
-                else
-                    spinner.setBackgroundColor(Color.argb(0, 255, 255, 255));
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
-        });
-    }
-
-    // 알림창
-    // 알림창
+    // 알림창 - 부위 선택 미완료 시 띄워줌
     public void showDialog() {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(GroceryListInPhotoActivity.this)
                 .setTitle("알림")
@@ -254,4 +153,5 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
         AlertDialog alert = alertBuilder.create();
         alert.show();
     }
+
 }

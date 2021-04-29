@@ -49,8 +49,9 @@ public class MainGrocerySelectionActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int cnt = 0;
                 int listCnt = scrollLayout.getChildCount();
-                String mainList = new String();
+                String mainList = new String(); // 선택 된 checkBox의 목록
 
+                // 선택 된 checkBox의 목록 생성(하나의 String으로 생성)
                 for(int i = 1; i <= listCnt; i++) {
                     CheckBox checkBox = findViewById(i);
                     if(checkBox.isChecked()){
@@ -59,6 +60,7 @@ public class MainGrocerySelectionActivity extends AppCompatActivity {
                     }
                 }
 
+                // 주재료 선택 개수에 따른 알림창 띄움(0개: 선택 필요 / 1~3개: 선택 완료. 검색할지 물어보기 / 4개 이상: 3개까지만 선택 가능. 다시 선택 필요)
                 if(cnt > 3) {
                     showDialog("3개까지만 선택 가능합니다. 다시 선택해주세요.", null);
                 }
@@ -68,11 +70,14 @@ public class MainGrocerySelectionActivity extends AppCompatActivity {
                 else {
                     showDialog("선택된 주재료가 없습니다. 다시 선택해주세요.", null);
                 }
+
+                // 서버로 보낼 String 확인
+                Log.e(TAG, mainList.replaceAll("[\\(|\\)]",""));
             }
         });
     }
 
-    // 리스트 출력
+    // 재료 리스트 출력
     public void groceryListOutput(String s) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.main_grocery_selection, null);
@@ -82,12 +87,13 @@ public class MainGrocerySelectionActivity extends AppCompatActivity {
         scrollLayout.addView(view);
     }
 
-    // 알림창
+    // 알림창 - 주재료 선택과 미선택 시 각각 다른 알림참 띄움
     public void showDialog(String s, String mainList) {
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(MainGrocerySelectionActivity.this)
                 .setTitle("알림");
 
         if(mainList != null) {
+            // 주재료 1개 이상 3개 이하일때(주재료 선택 개수는 현재 클래스를 불러온 if-else 문에서 이미 확인 완료)
             alertBuilder.setMessage(s+"\""+mainList+"\"")
             .setPositiveButton("레시피 검색", new DialogInterface.OnClickListener() {
                 @Override
@@ -104,12 +110,11 @@ public class MainGrocerySelectionActivity extends AppCompatActivity {
             });
         }
         else {
+            // 주재료 0개 이하 4개 이상일때
             alertBuilder.setMessage(s)
                 .setNegativeButton("확인", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Log.e(TAG, "다시 선택");
-                    }
+                    public void onClick(DialogInterface dialog, int which) { }
                 });
         }
 
