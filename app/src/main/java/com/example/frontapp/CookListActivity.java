@@ -3,18 +3,27 @@ package com.example.frontapp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.os.Build;
+import android.media.Image;
 import android.os.Bundle;
+import android.util.Log;
+import android.os.Parcelable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -25,12 +34,21 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class CookListActivity extends AppCompatActivity {
     private static String TAG = "CookListActivity";
     private LinearLayout cookList;
     private Intent intent;
     private int cntId = 100;
+    private JSONArray jsonArray;
     HashMap <Integer, JSONObject> imageMap = new HashMap<Integer, JSONObject>();
     String cook_name;
     String cook_img;
@@ -43,19 +61,68 @@ public class CookListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cook_list);
 
         intent = getIntent();
-        String mainList = intent.getStringExtra("mainList");
+//        String mainList = intent.getStringExtra("mainList");
+        String[] ingredientList = intent.getStringArrayExtra("ingredientList");
+        Log.e(TAG, "ingredientList");
 
         // 검색 결과 페이지 상단에 주재료 보여줌
         TextView textView = findViewById(R.id.main_grocery_list);
-        textView.setText(mainList);
+//        textView.setText(mainList);
+//
+//        // 요리 리스트 출력
+//        cookList = findViewById(R.id.scroll_view_layout);
+//        try {
+//            getRecipeData();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
-        // 요리 리스트 출력
-        cookList = findViewById(R.id.scroll_view_layout);
-        try {
-            getRecipeData();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        textView.setText(ingredientList[1]);
+
+        RetrofitClass retrofitClass = new RetrofitClass();
+        CookListInterface api = retrofitClass.retrofit.create(CookListInterface.class);
+        Call<String> call = api.getRecipe(ingredientList[0], ingredientList[1]);
+        call.enqueue(new Callback<String>()
+        {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response)
+            {
+                if (response.isSuccessful() && response.body() != null)
+                {
+                    Log.e("onSuccess", response.body());
+
+                    String jsonResponse = response.body();
+                    try {
+                        JSONObject jsonObject = new JSONObject( jsonResponse );
+
+                        if (jsonObject.getString("success").equals("true")) {
+                            jsonArray = jsonObject.getJSONArray("recipe_list");
+                            // 요리 리스트 출력
+                            cookList = findViewById(R.id.scroll_view_layout);
+                            try {
+                                getRecipeData();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            Toast.makeText( getApplicationContext(), "레시피 가져오기에 실패했습니다.", Toast.LENGTH_SHORT ).show();
+                            return;
+                        }
+
+                    } catch (JSONException e) {
+                        Log.e(TAG, "로그 없음");
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t)
+            {
+                Log.e(TAG, "에러 = " + t.getMessage());
+            }
+        });
 
         // 뒤로 가기 버튼
         findViewById(R.id.back_btn).setOnClickListener(new View.OnClickListener() {
@@ -72,28 +139,40 @@ public class CookListActivity extends AppCompatActivity {
         String filename = "jsons/감자전.json";
 
         // 파일 가져오기
+//        try {
+//            InputStream data = assetManager.open("jsons/감자전.json");
+//            InputStreamReader dataReader = new InputStreamReader(data);
+//            BufferedReader reader = new BufferedReader(dataReader);
+//
+//            StringBuffer buffer = new StringBuffer();
+//            String line = reader.readLine();
+//            while (line != null) {
+//                buffer.append(line + "\n");
+//                line = reader.readLine();
+//            }
+//
+//            // json 객체 생성 및 파싱
+//            JSONObject jsonObject = new JSONObject(buffer.toString());
+//            Iterator i = jsonObject.keys();
+//            while(i.hasNext()){
+//                JSONObject cook = jsonObject.getJSONObject(i.next().toString());
+//                cookAdd(cook);
+//            }
+//        }
         try {
-            InputStream data = assetManager.open("jsons/감자전.json");
-            InputStreamReader dataReader = new InputStreamReader(data);
-            BufferedReader reader = new BufferedReader(dataReader);
-
-            StringBuffer buffer = new StringBuffer();
-            String line = reader.readLine();
-            while (line != null) {
-                buffer.append(line + "\n");
-                line = reader.readLine();
-            }
-
             // json 객체 생성 및 파싱
-            JSONObject jsonObject = new JSONObject(buffer.toString());
-            Iterator i = jsonObject.keys();
-            while(i.hasNext()){
-                JSONObject cook = jsonObject.getJSONObject(i.next().toString());
+
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject cook = (JSONObject) jsonArray.get(i);
                 cookAdd(cook);
             }
+//            while(i.hasNext()){
+//                JSONObject cook = jsonObject.getJSONObject(i.next().toString());
+//                cookAdd(cook);
+//            }
 
         }
-        catch (IOException | JSONException e) {
+        catch (JSONException e) {
             e.printStackTrace();
         }
     }
@@ -150,7 +229,6 @@ public class CookListActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 }
-
                 startActivity(intent);
             }
         });

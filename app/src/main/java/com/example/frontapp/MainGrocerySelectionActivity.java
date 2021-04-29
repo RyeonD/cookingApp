@@ -3,7 +3,9 @@ package com.example.frontapp;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +13,12 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainGrocerySelectionActivity extends AppCompatActivity {
     private static String TAG = "MainGrocerySelectionActivity: ";
@@ -95,14 +101,20 @@ public class MainGrocerySelectionActivity extends AppCompatActivity {
         if(mainList != null) {
             // 주재료 1개 이상 3개 이하일때(주재료 선택 개수는 현재 클래스를 불러온 if-else 문에서 이미 확인 완료)
             alertBuilder.setMessage(s+"\""+mainList+"\"")
-            .setPositiveButton("레시피 검색", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Intent intent = new Intent(getApplicationContext(), CookListActivity.class);
-                    intent.putExtra("mainList", mainList);
-                    startActivity(intent);
-                }
-            }).setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                    .setPositiveButton("레시피 검색", new DialogInterface.OnClickListener() {
+                        @RequiresApi(api = Build.VERSION_CODES.O)
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            String grocery_list = new String().join(" ", groceryList);
+                            String[] ingredientList = new String[2];
+                            ingredientList[0] = grocery_list;
+                            ingredientList[1] = mainList;
+
+                            Intent intent = new Intent(getApplicationContext(), CookListActivity.class);
+                            intent.putExtra("ingredientList", ingredientList);
+                            startActivity(intent);
+                        }
+                    }).setNegativeButton("취소", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     Log.e(TAG, "취소할꺼임");
@@ -114,7 +126,9 @@ public class MainGrocerySelectionActivity extends AppCompatActivity {
             alertBuilder.setMessage(s)
                 .setNegativeButton("확인", new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) { }
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.e(TAG, "다시 선택");
+                    }
                 });
         }
 
