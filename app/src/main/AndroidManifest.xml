@@ -40,7 +40,8 @@
         <activity android:name=".CookRecipePageActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".RegisterActivity" />
-<!--        <service android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService" android:enabled="true" />-->
+        <activity android:name=".GroceryListResiveActivity" />
+        <service android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService" android:enabled="true" />
     </application>
 
 </manifest>

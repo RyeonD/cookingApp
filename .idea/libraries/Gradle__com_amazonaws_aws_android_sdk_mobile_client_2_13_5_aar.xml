@@ -10,6 +10,9 @@
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/76eb22b7c336d0fbc660f72797609791/jetified-aws-android-sdk-mobile-client-2.13.5/AndroidManifest.xml" />
       <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/76eb22b7c336d0fbc660f72797609791/jetified-aws-android-sdk-mobile-client-2.13.5/jars/classes.jar!/" />
       <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/76eb22b7c336d0fbc660f72797609791/jetified-aws-android-sdk-mobile-client-2.13.5/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/251e00684ee93031d0491f1803b8a3f7/jetified-aws-android-sdk-mobile-client-2.13.5/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/251e00684ee93031d0491f1803b8a3f7/jetified-aws-android-sdk-mobile-client-2.13.5/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/251e00684ee93031d0491f1803b8a3f7/jetified-aws-android-sdk-mobile-client-2.13.5/jars/classes.jar!/" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.amazonaws/aws-android-sdk-mobile-client/2.13.5/fa8d930afc67ea701da50d9c2902388ac04093c4/aws-android-sdk-mobile-client-2.13.5-javadoc.jar!/" />

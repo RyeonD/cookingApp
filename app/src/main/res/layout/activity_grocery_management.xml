@@ -65,7 +65,7 @@
         <TableRow
             android:id="@+id/info_grocery_title_row"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="#E8E5E5"
             android:gravity="center"
             android:padding="13dp">
@@ -80,41 +80,9 @@
                 android:textSize="18sp" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/grocery_cnt_title_layout"
-                android:layout_width="15dp"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/grocery_cnt_title1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="단위"
-                    android:textColor="#000000"
-                    android:textSize="18sp"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <TextView
-                    android:id="@+id/grocery_cnt_title2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="(개수, 그램)"
-                    android:textColor="#000000"
-                    android:textSize="14sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/grocery_cnt_title1" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/expiration_date_title_layout"
                 android:layout_width="20dp"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/expiration_date_title1"
@@ -162,17 +130,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:orientation="vertical">
-
-            <TableLayout
-                android:id="@+id/grocery_manage_table"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="5dp"
-                android:stretchColumns="*">
-
-            </TableLayout>
-        </LinearLayout>
+            android:orientation="vertical"/>
     </ScrollView>
 
     <LinearLayout

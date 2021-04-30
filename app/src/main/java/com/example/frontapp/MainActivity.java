@@ -64,14 +64,16 @@ public class MainActivity extends AppCompatActivity {
         // 카메라 권한 확인 및 권한 부여
         permissionCheck();
 
+        // 다른 페이지에서 카메라 재실행 시
+        intent = getIntent();
+        if(intent.getBooleanExtra("camera", false))
+            startCamera();;
+
         // search button click 동작 - 카메라 실행
         findViewById(R.id.image_search_btn2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view){
-                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if(cameraIntent.resolveActivity(getPackageManager()) != null) {
-                    startActivityForResult(cameraIntent, TAKE_PICTURE);
-                }
+                startCamera();
             }
         });
 
@@ -84,6 +86,13 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    public void startCamera() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if(cameraIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(cameraIntent, TAKE_PICTURE);
+        }
     }
 
     // 권한 확인 및 권한 부여
@@ -180,22 +189,10 @@ public class MainActivity extends AppCompatActivity {
     public void cookAdd(String cook_name, String cook_img) {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View cookView = inflater.inflate(R.layout.cook_info, null);
-//        TextView name = cookView.findViewById(R.id.cook_name);
-//        ImageView imageView = cookView.findViewById(R.id.imageButton);
-//        name.setText(cook_name);
 
         try {
             URL url = new URL(cook_img);
 
-            // Bitmap 생성
-//            URLConnection conn = (URLConnection) img_url.openConnection();
-//            conn.setDoInput(true);
-//            conn.connect();
-//            InputStream is = conn.getInputStream();
-
-//            bitmap = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-//            imageView.setImageBitmap(bitmap);
-//            Glide.with(this).load(url).into(imageView);
         } catch (IOException e) {
             e.printStackTrace();
         }

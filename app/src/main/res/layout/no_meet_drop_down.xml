@@ -10,14 +10,13 @@
     android:paddingRight="7dp"
     android:paddingBottom="15dp">
 
-    <TextView
+    <CheckBox
         android:id="@+id/no_meet_name"
-        android:layout_width="70dp"
-        android:layout_height="20dp"
-        android:layout_marginStart="65dp"
-        android:layout_marginLeft="65dp"
-        android:gravity="center"
-        android:text="TextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="40dp"
+        android:layout_marginLeft="40dp"
+        android:text="CheckBox"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -26,8 +25,8 @@
         android:id="@+id/no_meet"
         android:layout_width="70dp"
         android:layout_height="20dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
+        android:layout_marginStart="70dp"
+        android:layout_marginLeft="70dp"
         android:gravity="center"
         android:text="-"
         app:layout_constraintBottom_toBottomOf="parent"

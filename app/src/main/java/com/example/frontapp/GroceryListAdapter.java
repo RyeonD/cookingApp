@@ -11,6 +11,7 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -28,7 +29,7 @@ public class GroceryListAdapter extends BaseAdapter {
     private static String TAG = "GroceryListAdapter";
 
     private ArrayList<GroceryList> groceryLists = new ArrayList<GroceryList>();     // 재료 리스트(다른 Activity에서 받아옴)
-    private TextView textView;  // 재료 이름 넣을 TextView
+    private CheckBox checkBox;  // 재료 이름 넣을 CheckBox
     private Spinner spinner;    // 고기의 경우 dropdown 이용하여 선택 시 사용할 Spinner
 
     // Spinner에 들어가는 값을 체크하기 위한 것("부위 선택"이면 다음 페이지로 넘어가지 않도록 하기 위한 것)
@@ -37,6 +38,11 @@ public class GroceryListAdapter extends BaseAdapter {
     // 재료 목록 받아와 현재 클래스의 groceryLists 변수 정의
     public GroceryListAdapter(ArrayList<GroceryList> data) {
         groceryLists = data;
+    }
+
+    // 재료 목록 반환
+    public ArrayList groceryList() {
+        return this.groceryLists;
     }
 
     // 현재 클래스의 groceryLists 변수 크기 반환
@@ -68,27 +74,53 @@ public class GroceryListAdapter extends BaseAdapter {
 
             // "고기"라는 단어가 포함된 재료(닭고기, 돼지고기, 소고기)의 경우 부위 선택(Spinner 출력)
             if(grocery.getName().contains("고기")) {
+                Log.e(TAG, grocery.getName()+" /고기로 인식중");
                 convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.meet_drop_down, parent, false);
-                textView = (TextView) convertView.findViewById(R.id.meet_row_name);
+                checkBox = convertView.findViewById(R.id.meet_row_name);
                 spinner = makeTableWithSpinner(grocery.getName(), convertView);
+                holder.spinner = spinner;
             }
             else {
+                Log.e(TAG, grocery.getName());
                 convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.no_meet_drop_down, parent, false);
-                textView = (TextView) convertView.findViewById(R.id.no_meet_name);
+                checkBox = convertView.findViewById(R.id.no_meet_name);
             }
 
-            textViewStyle(textView);    // text의 크기, 색깔 등 디자인 조정
-            holder.textView = textView;
-
+            textViewStyle(checkBox);    // text의 크기, 색깔 등 디자인 조정
+            holder.checkBox = checkBox;
             convertView.setTag(holder);
+
+            holder.checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(holder.checkBox.isChecked()) {
+                        grocery.setSeletced(true);
+                        Log.e(TAG, grocery.getName() + " / true임");
+                    }
+                    else {
+                        grocery.setSeletced(false);
+                        Log.e(TAG, grocery.getName() + " / false임");
+                    }
+                }
+            });
         }
         else {
             holder = (ViewHolder) convertView.getTag();
         }
 
-        holder.textView.setText(grocery.getName());
+        holder.checkBox.setText(grocery.getName());
+        holder.checkBox.setChecked(grocery.isSeletced());
+        holder.checkBox.setTag(grocery);
 
         return convertView;
+    }
+
+    // 재료 리스트 반환(고기 부위는 반환되지 않음)
+    public String [] getList() {
+        String [] result = new String[groceryLists.size()];
+        for(int i=0; i<result.length; i++)
+            result[i] = groceryLists.get(i).getName();
+        return result;
     }
 
     // 고기 부위 선택이 모두 되어 있는지 확인(True면 재료 리스트 반환)
@@ -116,7 +148,8 @@ public class GroceryListAdapter extends BaseAdapter {
     }
 
     static class ViewHolder {
-        TextView textView;
+        public CheckBox checkBox;
+        public Spinner spinner;
     }
 
     // spinner(드롭다운) 설정

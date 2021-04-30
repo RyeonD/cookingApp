@@ -42,8 +42,9 @@ public class PersonInfoActivity extends AppCompatActivity {
         findViewById(R.id.info_search_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                intent = new Intent(getApplicationContext(), CameraActivity.class);
-//                startActivity(intent);
+                intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.putExtra("camera", true);
+                startActivity(intent);
             }
         });
 

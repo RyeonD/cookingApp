@@ -32,14 +32,14 @@ public class GroceryManagementActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_grocery_management);
 
-        if(true) {
-            groceryTable = findViewById(R.id.grocery_manage_table);
-            if(true) // 고기라면
-                addTableRow("고기"+"("+"소고기"+")", "100", "21.05.05");
-
-            addTableRow("계란", "10", "21.05.10");
-            addTableRow("양파", "2", "21.05.07");
-        }
+//        if(true) {
+//            groceryTable = findViewById(R.id.grocery_manage_table);
+//            if(true) // 고기라면
+//                addTableRow("고기"+"("+"소고기"+")", "100", "21.05.05");
+//
+//            addTableRow("계란", "10", "21.05.10");
+//            addTableRow("양파", "2", "21.05.07");
+//        }
 
         findViewById(R.id.grocery_manage_change_btn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,7 +53,10 @@ public class GroceryManagementActivity extends AppCompatActivity {
         findViewById(R.id.grocery_manage_search_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getApplicationContext(),"재료로 요리 검색", Toast.LENGTH_LONG).show();
+                String [] groceryList = {"소고기(안심)", "계란", "양파"};
+                intent = new Intent(getApplicationContext(), MainGrocerySelectionActivity.class);
+                intent.putExtra("groceryList", groceryList);
+                startActivity(intent);
             }
         });
     }
