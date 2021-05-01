@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.frontapp">
+
     <!-- 인터넷 연결 권한 허용 -->
     <uses-permission android:name="android.permission.INTERNET" />
 <!--    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>-->
@@ -32,7 +33,7 @@
         </activity>
         <activity android:name=".PhotoCheckActivity" />
         <activity android:name=".PersonInfoActivity" />
-        <activity android:name=".GroceryManagementActivity" />
+        <activity android:name=".IngredientManagementActivity" />
         <activity android:name=".GroceryListInPhotoActivity" />
         <activity android:name=".MainGrocerySelectionActivity" />
         <activity android:name=".CookListActivity" />

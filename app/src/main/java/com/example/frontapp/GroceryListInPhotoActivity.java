@@ -10,7 +10,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -63,7 +62,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
     private LinearLayout groceryTable;
     private int rowId = 0;
     private Map <Integer, String> groceries = new HashMap<Integer, String>();
-    ArrayList<GroceryList> arrayList = new ArrayList<>();
+    ArrayList<Grocery> arrayList = new ArrayList<>();
     GroceryListAdapter adapter;
     private String [] groceryList;
     ListView listView;
@@ -121,6 +120,34 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
             public void onStateChanged(int id, TransferState state) {
                 Log.d(TAG, "onStateChanged: " + id + ", " + state.toString());
 
+                if (TransferState.COMPLETED == state) {
+                    // Handle a completed upload.
+                    Log.d(TAG, "Upload is completed. ");
+
+                    RetrofitClass retrofitClass = new RetrofitClass();
+                    GroceryListInPhotoInterface api = retrofitClass.retrofit.create(GroceryListInPhotoInterface.class);
+                    Call<String> call = api.getModelResult("sagemaker-deploy-test", fileName);
+                    call.enqueue(new Callback<String>()
+                    {
+                        @Override
+                        public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response)
+                        {
+                            if (response.isSuccessful() && response.body() != null)
+                            {
+                                Log.e("onSuccess", response.body());
+
+                                String jsonResponse = response.body();
+                                parseModelData(jsonResponse);
+                            }
+                        }
+
+                        @Override
+                        public void onFailure(@NonNull Call<String> call, @NonNull Throwable t)
+                        {
+                            Log.e(TAG, "에러 = " + t.getMessage());
+                        }
+                    });
+                }
             }
 
             @Override
@@ -196,7 +223,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
             if (grocery_name.equals("success")) {
                 continue;
             }
-            arrayList.add(new GroceryList(grocery_name));
+            arrayList.add(new Grocery(grocery_name));
         }
 
         // Adapter 생성
@@ -205,12 +232,6 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
         listView = findViewById(R.id.grocery_table_layout);
         listView.setAdapter(adapter);
 
-//        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                GroceryList groceryList = (GroceryList) parent.getItemAtPosition(position);
-//            }
-//        });
     }
 
     // 알림창 - 부위 선택 미완료 시 띄워줌
@@ -239,7 +260,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
 
         groceryTable = findViewById(R.id.scroll_view_add_layout);
 
-        // json 파일 try-catch
+//        // json 파일 try-catch
 //        try {
 //            jsonObject = getPhotoResult();
 //        } catch (IOException e) {
@@ -259,30 +280,6 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
 
         uploadWithTransferUtility(s3_upload_file);
 
-        RetrofitClass retrofitClass = new RetrofitClass();
-        GroceryListInPhotoInterface api = retrofitClass.retrofit.create(GroceryListInPhotoInterface.class);
-        Call<String> call = api.getModelResult("sagemaker-deploy-test", s3_upload_file);
-        call.enqueue(new Callback<String>()
-        {
-            @Override
-            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response)
-            {
-                if (response.isSuccessful() && response.body() != null)
-                {
-                    Log.e("onSuccess", response.body());
-
-                    String jsonResponse = response.body();
-                    parseModelData(jsonResponse);
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t)
-            {
-                Log.e(TAG, "에러 = " + t.getMessage());
-            }
-        });
-
         // 재료 항목 삭제 버튼
         findViewById(R.id.delete_btn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -290,7 +287,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(), "삭제", Toast.LENGTH_LONG).show();
 
                 for(int i = arrayList.size()-1; i >= 0; i--) {
-                    GroceryList grocery = arrayList.get(i);
+                    Grocery grocery = arrayList.get(i);
                     if(grocery.isSeletced()) {
                         arrayList.remove(i);
                     }
@@ -342,6 +339,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
         });
     }
 
+    // 목록 추가 버튼 클릭 시 추가 할 목록 입력하는 dialog 창
     private void groceryAddDialog() {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.grocery_list_add_dialog, null);
@@ -354,7 +352,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         EditText textPaint = view.findViewById(R.id.edit_grocery_name);
-                        arrayList.add(new GroceryList(textPaint.getText().toString()));
+                        arrayList.add(new Grocery(textPaint.getText().toString()));
                         adapter = new GroceryListAdapter(arrayList);
                         listView.setAdapter(adapter);
                     }

@@ -1,24 +1,19 @@
 package com.example.frontapp;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.Dimension;
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +23,7 @@ import java.util.Map;
 public class GroceryListAdapter extends BaseAdapter {
     private static String TAG = "GroceryListAdapter";
 
-    private ArrayList<GroceryList> groceryLists = new ArrayList<GroceryList>();     // 재료 리스트(다른 Activity에서 받아옴)
+    private ArrayList<Grocery> groceryLists = new ArrayList<Grocery>();     // 재료 리스트(다른 Activity에서 받아옴)
     private CheckBox checkBox;  // 재료 이름 넣을 CheckBox
     private Spinner spinner;    // 고기의 경우 dropdown 이용하여 선택 시 사용할 Spinner
 
@@ -36,7 +31,7 @@ public class GroceryListAdapter extends BaseAdapter {
     private HashMap <String, String> checkSpinnerMap = new HashMap<String, String>();
 
     // 재료 목록 받아와 현재 클래스의 groceryLists 변수 정의
-    public GroceryListAdapter(ArrayList<GroceryList> data) {
+    public GroceryListAdapter(ArrayList<Grocery> data) {
         groceryLists = data;
     }
 
@@ -67,7 +62,7 @@ public class GroceryListAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
-        GroceryList grocery = groceryLists.get(position);
+        Grocery grocery = groceryLists.get(position);
 
         if(convertView == null) {
             holder = new ViewHolder();

@@ -3,6 +3,7 @@ package com.example.frontapp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.graphics.Color;
 import android.os.Build;
 import android.media.Image;
 import android.os.Bundle;
@@ -54,6 +55,7 @@ public class CookListActivity extends AppCompatActivity {
     String cook_img;
     String cook_ingredients;
     String cook_recipes;
+    String[] ingredientList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -61,23 +63,20 @@ public class CookListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cook_list);
 
         intent = getIntent();
-//        String mainList = intent.getStringExtra("mainList");
-        String[] ingredientList = intent.getStringArrayExtra("ingredientList");
+        ingredientList = intent.getStringArrayExtra("ingredientList");
         Log.e(TAG, "ingredientList");
 
         // 검색 결과 페이지 상단에 주재료 보여줌
         TextView textView = findViewById(R.id.main_grocery_list);
-//        textView.setText(mainList);
-//
-//        // 요리 리스트 출력
+        textView.setText(ingredientList[1]);
+
+        // 요리 리스트 출력
 //        cookList = findViewById(R.id.scroll_view_layout);
 //        try {
 //            getRecipeData();
 //        } catch (IOException e) {
 //            e.printStackTrace();
 //        }
-
-        textView.setText(ingredientList[1]);
 
         RetrofitClass retrofitClass = new RetrofitClass();
         CookListInterface api = retrofitClass.retrofit.create(CookListInterface.class);
@@ -136,11 +135,11 @@ public class CookListActivity extends AppCompatActivity {
     // 레시피 가져와 파싱
     private void getRecipeData() throws IOException {
         AssetManager assetManager = getAssets();
-        String filename = "jsons/감자전.json";
+        String filename = "jsons/gamjajeon.json";
 
         // 파일 가져오기
 //        try {
-//            InputStream data = assetManager.open("jsons/감자전.json");
+//            InputStream data = assetManager.open("jsons/gamjajeon.json");
 //            InputStreamReader dataReader = new InputStreamReader(data);
 //            BufferedReader reader = new BufferedReader(dataReader);
 //
@@ -183,6 +182,7 @@ public class CookListActivity extends AppCompatActivity {
             // json객체에서 요리 이름과 이미지 가져와 변수에 정의
             cook_name = cookObject.getString("name");
             cook_img = cookObject.getString("imagelink");
+            cook_ingredients = cookObject.getString("ingredient");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -192,8 +192,24 @@ public class CookListActivity extends AppCompatActivity {
         // 데이터가 삽입된 레이아웃을 해당 화면 레이아웃에 추가
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View cookView = inflater.inflate(R.layout.cook_info, null);
+        TextView mainGrocery = cookView.findViewById(R.id.main_grocery_in_cook_list);
         TextView name = cookView.findViewById(R.id.textView);
         ImageView imageView = cookView.findViewById(R.id.imageView);
+
+        String input = new String();
+        for(String s : ingredientList[1].split(" ")) {
+            if (cook_ingredients.contains(s)) {
+                Log.e(TAG, s);
+                input += (s + " ");
+            }
+        }
+
+        if(!input.isEmpty()) {
+            mainGrocery.setText(input.substring(0, input.length()-1));
+        }
+        else
+            mainGrocery.setVisibility(View.GONE);
+
         name.setText(cook_name);
 
         try {
