@@ -23,6 +23,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
+import com.amazonaws.mobileconnectors.apigateway.ApiClientFactory;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferNetworkLossHandler;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
@@ -56,6 +57,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
+import yobisdk.SagemakerendpointapiClient;
+import yobisdk.model.Input;
+import yobisdk.model.Result;
 
 public class GroceryListInPhotoActivity extends AppCompatActivity {
     private static String TAG = "GroceryListInPhotoActivity: ";
@@ -116,7 +120,25 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
             @Override
             public void onStateChanged(int id, TransferState state) {
                 Log.d(TAG, "onStateChanged: " + id + ", " + state.toString());
+                if (TransferState.COMPLETED == state) {
+                    // Handle a completed upload.
+                    Log.d(TAG, "Upload is completed. ");
 
+                    Thread thread = new Thread() {
+                        @Override
+                        public void run() {
+                            ApiClientFactory factory = new ApiClientFactory();
+                            final SagemakerendpointapiClient client = factory.build(SagemakerendpointapiClient.class);
+                            Input body = new Input();
+                            body.setBucket("sagemaker-deploy-test");
+                            body.setImageUrl(fileName);
+                            Result output = client.rootPost(body);
+                            String result = output.getOutput().getResult();
+                            System.out.println(result);
+                        }
+                    };
+                    thread.start();
+                }
             }
 
             @Override
@@ -172,30 +194,6 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
         String s3_upload_file = saveBitmapToJpg(bitmap, fileName);
 
         uploadWithTransferUtility(s3_upload_file);
-
-        RetrofitClass retrofitClass = new RetrofitClass();
-        GroceryListInPhotoInterface api = retrofitClass.retrofit.create(GroceryListInPhotoInterface.class);
-        Call<String> call = api.getModelResult("sagemaker-deploy-test", s3_upload_file);
-        call.enqueue(new Callback<String>()
-        {
-            @Override
-            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response)
-            {
-                if (response.isSuccessful() && response.body() != null)
-                {
-                    Log.e("onSuccess", response.body());
-
-                    String jsonResponse = response.body();
-                    parseModelData(jsonResponse);
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t)
-            {
-                Log.e(TAG, "에러 = " + t.getMessage());
-            }
-        });
 
         // 목록 수정 버튼 클릭
         findViewById(R.id.grocery_list_in_photo_change_btn).setOnClickListener(new View.OnClickListener() {

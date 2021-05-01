@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="Gradle: ./app/libs/aws-android-sdk-apigateway-core-2.16.13.jar">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/app/libs/aws-android-sdk-apigateway-core-2.16.13.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
