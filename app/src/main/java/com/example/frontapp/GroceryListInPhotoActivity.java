@@ -45,10 +45,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -124,20 +126,35 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
                     // Handle a completed upload.
                     Log.d(TAG, "Upload is completed. ");
 
-                    Thread thread = new Thread() {
+                    RetrofitClass retrofitClass = new RetrofitClass("https://46l1iikk90.execute-api.ap-northeast-2.amazonaws.com/");
+                    GroceryListInPhotoInterface api = retrofitClass.retrofit.create(GroceryListInPhotoInterface.class);
+                    Map<String, String> map = new HashMap<>();
+                    map.put("bucket", "sagemaker-deploy-test");
+                    map.put("image_url", fileName);
+                    JSONObject json = new JSONObject(map);
+//                    Call<String> call = api.getModelResult("sagemaker-deploy-test", fileName);
+                    Call<String> call = api.getModelResult(json);
+                    call.enqueue(new Callback<String>()
+                    {
                         @Override
-                        public void run() {
-                            ApiClientFactory factory = new ApiClientFactory();
-                            final SagemakerendpointapiClient client = factory.build(SagemakerendpointapiClient.class);
-                            Input body = new Input();
-                            body.setBucket("sagemaker-deploy-test");
-                            body.setImageUrl(fileName);
-                            Result output = client.rootPost(body);
-                            String result = output.getOutput().getResult();
-                            System.out.println(result);
+                        public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response)
+                        {
+                            if (response.isSuccessful() && response.body() != null)
+                            {
+                                Log.e("onSuccess", response.body());
+
+                                String jsonResponse = response.body();
+                                parseModelData(jsonResponse);
+                            }
                         }
-                    };
-                    thread.start();
+
+                        @Override
+                        public void onFailure(@NonNull Call<String> call, @NonNull Throwable t)
+                        {
+                            Log.e(TAG, "에러 = " + t.getMessage());
+                        }
+                    });
+
                 }
             }
 

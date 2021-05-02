@@ -5,6 +5,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 public class RetrofitClass {
     protected String URL = "http://785516a9c567.ngrok.io/";
@@ -20,6 +21,18 @@ public class RetrofitClass {
         retrofit = new Retrofit.Builder()
                 .baseUrl(URL)
                 .addConverterFactory(ScalarsConverterFactory.create())
+                .client(okHttpClient)
+                .build();
+    }
+    public RetrofitClass(String _URL) {
+        okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(1, TimeUnit.MINUTES)
+                .readTimeout(1, TimeUnit.MINUTES)
+                .writeTimeout(1, TimeUnit.MINUTES)
+                .build();
+        retrofit = new Retrofit.Builder()
+                .baseUrl(_URL)
+                .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build();
     }
