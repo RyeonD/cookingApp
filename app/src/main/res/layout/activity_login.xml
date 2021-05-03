@@ -6,15 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".LoginActivity">
 
+
     <Button
         android:id="@+id/login_button"
         style="@style/defaultButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="188dp"
         android:text="로그인"
-        app:layout_constraintBaseline_toBaselineOf="@+id/join_button"
-        app:layout_constraintStart_toStartOf="@+id/auto_login" />
-
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/join_button"
+        app:layout_constraintHorizontal_bias="0.748"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/login_id"
@@ -38,7 +41,8 @@
         android:hint="비밀번호"
         android:inputType="textPassword"
         app:layout_constraintBottom_toTopOf="@+id/auto_login"
-        app:layout_constraintStart_toStartOf="@+id/login_id" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageView
         android:id="@+id/imageView3"
@@ -48,6 +52,8 @@
         app:layout_constraintBottom_toTopOf="@+id/login_id"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.775"
         app:tint="@color/colorAccent" />
 
     <Button
@@ -55,10 +61,12 @@
         style="@style/defaultButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="190dp"
+        android:layout_marginEnd="100dp"
+        android:layout_marginRight="100dp"
+        android:layout_marginBottom="188dp"
         android:text="가입"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="@+id/login_password" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <CheckBox
         android:id="@+id/auto_login"
@@ -67,6 +75,8 @@
         android:layout_marginBottom="40dp"
         android:text="자동 로그인"
         app:layout_constraintBottom_toTopOf="@+id/login_button"
-        app:layout_constraintStart_toStartOf="@+id/login_password" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.324"
+        app:layout_constraintStart_toStartOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
