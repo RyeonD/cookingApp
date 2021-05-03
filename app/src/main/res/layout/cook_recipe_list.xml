@@ -21,6 +21,7 @@
         android:id="@+id/recipe_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/bmhannap_pro"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
         android:text="TextView"

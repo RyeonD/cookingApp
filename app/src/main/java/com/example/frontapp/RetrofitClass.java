@@ -7,7 +7,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class RetrofitClass {
-    protected String URL = "http://378cc459e8ac.ngrok.io/";
+    protected String URL = "http://5ba8bb20c1ad.ngrok.io/";
     protected OkHttpClient okHttpClient;
     protected Retrofit retrofit;
 
