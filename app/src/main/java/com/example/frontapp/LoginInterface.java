@@ -7,7 +7,7 @@ import retrofit2.http.POST;
 
 public interface LoginInterface {
     @FormUrlEncoded
-    @POST("test/login/")
+    @POST("login")
     Call<String> getUserLogin(
             @Field("user_id") String UserId,
             @Field("user_pw") String UserPwd

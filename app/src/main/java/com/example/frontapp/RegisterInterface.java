@@ -9,7 +9,7 @@ import retrofit2.http.POST;
 
 public interface RegisterInterface {
     @FormUrlEncoded
-    @POST("test/user/")
+    @POST("user")
     Call<String> getUserRegist(
             @Field("user_id") String UserId,
             @Field("user_pw") String UserPwd,

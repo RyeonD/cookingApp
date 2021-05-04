@@ -43,6 +43,7 @@
         <activity android:name=".RegisterActivity" />
         <activity android:name=".GroceryListResiveActivity" />
         <activity android:name=".MainActivity" />
+        <activity android:name=".SettingActivity" />
         <service android:name="com.amazonaws.mobileconnectors.s3.transferutility.TransferService" android:enabled="true" />
     </application>
 

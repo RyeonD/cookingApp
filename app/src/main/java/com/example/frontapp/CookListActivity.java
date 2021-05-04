@@ -65,6 +65,7 @@ public class CookListActivity extends AppCompatActivity {
         intent = getIntent();
         ingredientList = intent.getStringArrayExtra("ingredientList");
         Log.e(TAG, "ingredientList");
+        Log.e(TAG, ingredientList[0] + " / " + ingredientList[1]);
 
         // 검색 결과 페이지 상단에 주재료 보여줌
         TextView textView = findViewById(R.id.main_grocery_list);

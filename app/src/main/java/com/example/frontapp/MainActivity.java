@@ -2,39 +2,41 @@ package com.example.frontapp;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
-import androidx.gridlayout.widget.GridLayout;
 
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private static String TAG = "MainActivity: ";
@@ -43,24 +45,16 @@ public class MainActivity extends AppCompatActivity {
     static final int REQUEST_CAMERA = 1;
     final static int TAKE_PICTURE = 1;
     final static int REQUEST_TAKE_PHOTO = 1;
-    TextView mainText;
-    GridLayout cookList;
+    private BackPressCloseHandler backPressCloseHandler;
     Intent intent;
+    Button loginBtn;
+    JSONArray jsonArray;
+    boolean autoLoginCheck;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
         setContentView(R.layout.activity_main_test);
-
-        // 메인 페이지 요리 추천 목록
-//        mainText = findViewById(R.id.main_text1);
-//        cookList = findViewById(R.id.cook_list);
-//        try {
-//            getRecipeData();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
 
         // 카메라 권한 확인 및 권한 부여
         permissionCheck();
@@ -68,7 +62,25 @@ public class MainActivity extends AppCompatActivity {
         // 다른 페이지에서 카메라 재실행 시
         intent = getIntent();
         if(intent.getBooleanExtra("camera", false))
-            startCamera();;
+            startCamera();
+
+        // 자동 로그인 확인
+        loginBtn = findViewById(R.id.login_btn);
+        checkAutoLogin();
+
+        loginBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(loginBtn.getText().toString().contains("로그인")) {
+                    intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    startActivity(intent);
+                }
+                else {
+                    intent = new Intent(getApplicationContext(), IngredientManagementActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
 
         // search button click 동작 - 카메라 실행
         findViewById(R.id.image_search_btn2).setOnClickListener(new View.OnClickListener() {
@@ -87,8 +99,150 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        // 뒤로가기
+        backPressCloseHandler = new BackPressCloseHandler(this);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(!autoLoginCheck) {
+            LoginActivity.AutoLogin.clearUserId(getApplicationContext());
+        }
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        backPressCloseHandler.onBackPressed();
+    }
+
+    public class BackPressCloseHandler {
+        private long backKeyPressedTime = 0;
+        private Activity activity;
+        private Toast toast;
+
+        private BackPressCloseHandler(Activity context) {
+            this.activity = context;
+        }
+        public void onBackPressed() {
+            if(System.currentTimeMillis() > backKeyPressedTime + 2000) {
+                backKeyPressedTime = System.currentTimeMillis();
+                toast = Toast.makeText(activity, "한 번 더 누르면 종료", Toast.LENGTH_LONG);
+                toast.show();
+                return;
+            }
+            if(System.currentTimeMillis() <= backKeyPressedTime + 2000) {
+                onDestroy();
+            }
+        }
+    }
+
+    private void setCircleText(boolean checkLogin) {
+        ConstraintLayout textInCircle = findViewById(R.id.change_circle_text);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(getApplicationContext().LAYOUT_INFLATER_SERVICE);
+        if(checkLogin) {
+            // 자동 로그인 되면
+            loginBtn.setText("나의 재료 보러가기");
+
+            LinearLayout linearLayout = (LinearLayout) inflater.inflate(R.layout.main_circle_login_complete_layout, null, false);
+            TextView first = linearLayout.findViewById(R.id.level1);
+            TextView second = linearLayout.findViewById(R.id.level2);
+            TextView third = linearLayout.findViewById(R.id.level3);
+            TextView fourth = linearLayout.findViewById(R.id.level4);
+
+            first.setText("신선 - 2");
+            second.setText("양호 - 1");
+            third.setText("위험 - 3");
+            fourth.setText("만료 - 0");
+
+            textInCircle.addView(linearLayout);
+        }
+        else {
+            loginBtn.setText("로그인");
+            ConstraintLayout constraintLayout = (ConstraintLayout) inflater.inflate(R.layout.main_circle_request_login_layout, null, false);
+            textInCircle.addView(constraintLayout);
+        }
+    }
+
+    private void checkAutoLogin(){
+        String UserId = LoginActivity.AutoLogin.getUserId(getApplicationContext());
+        autoLoginCheck = LoginActivity.AutoLogin.getAuto(getApplicationContext());
+
+        if(!UserId.isEmpty()) {
+            setCircleText(true);
+            setPesonalGrocery(UserId);
+        }
+        else {
+            setCircleText(false);
+        }
+    }
+
+    private void setPesonalGrocery(String UserId) {
+        // 데이터 가져오기
+        RetrofitClass retrofitClass = new RetrofitClass();
+        MainInterface api = retrofitClass.retrofit.create(MainInterface.class);
+        Call<String> call = api.getUserId(UserId);
+        call.enqueue(new Callback<String>()
+        {
+            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+            @Override
+            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response)
+            {
+                if (response.isSuccessful() && response.body() != null)
+                {
+                    Log.e("onSuccess", response.body());
+
+                    String jsonResponse = response.body();
+                    try {
+                        JSONObject jsonObject = new JSONObject( jsonResponse );
+                        Log.e(TAG, jsonObject.toString());
+                        if (jsonObject.getString("success").equals("true")) {
+                            jsonArray = jsonObject.getJSONArray("result");
+                            // 요리 리스트 출력
+//                            cookList = findViewById(R.id.scroll_view_layout);
+                            Log.e(TAG, jsonArray.toString());
+                            getGroceryList();
+                        } else {
+                            Toast.makeText( getApplicationContext(), "레시피 가져오기에 실패했습니다.", Toast.LENGTH_SHORT ).show();
+                            return;
+                        }
+
+                    } catch (JSONException e) {
+                        Log.e(TAG, "로그 없음");
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t)
+            {
+                Log.e(TAG, "에러 = " + t.getMessage());
+            }
+        });
+    }
+
+    private void getGroceryList() {
+        try {
+            Log.e(TAG, "확인");
+            // json 객체 생성 및 파싱
+            for(int i = 0; i < jsonArray.length(); i++) {
+                JSONObject cook = (JSONObject) jsonArray.get(i);
+                Log.e(TAG, cook.getClass().toString());
+                Log.e(TAG, cook.toString());
+            }
+        }
+        catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    // 카메라 실행
     public void startCamera() {
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         if(cameraIntent.resolveActivity(getPackageManager()) != null) {
@@ -149,56 +303,6 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra( "img", imageBitmap);
             startActivity(intent);
         }
-    }
-
-    // 이 아래 코드들은 현재 사용 안함 - 요리 추천 리스트가 필요할 시 사용할 예정. 아니면 삭제해야됨.
-    // 레시피 가져와 파싱
-    private void getRecipeData() throws IOException {
-        AssetManager assetManager = getAssets();
-        String filename = "jsons/gamjajeon.json";
-
-        // 파일 가져오기
-        try {
-            InputStream data = assetManager.open("jsons/gamjajeon.json");
-            InputStreamReader dataReader = new InputStreamReader(data);
-            BufferedReader reader = new BufferedReader(dataReader);
-
-            StringBuffer buffer = new StringBuffer();
-            String line = reader.readLine();
-            while (line != null) {
-                buffer.append(line + "\n");
-                line = reader.readLine();
-            }
-
-            // json 객체 생성 및 파싱
-            JSONObject jsonObject = new JSONObject(buffer.toString());
-            Iterator i = jsonObject.keys();
-            while(i.hasNext()){
-                JSONObject recipe = jsonObject.getJSONObject(i.next().toString());
-                String cook_name = recipe.getString("name");
-                String cook_img = recipe.getString("imagelink");
-                cookAdd(cook_name, cook_img);
-            }
-
-        }
-        catch (IOException | JSONException e) {
-            e.printStackTrace();
-        }
-    }
-
-    // 요리 목록 출력
-    public void cookAdd(String cook_name, String cook_img) {
-        LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View cookView = inflater.inflate(R.layout.cook_info, null);
-
-        try {
-            URL url = new URL(cook_img);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-//        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-        cookList.addView(cookView);
     }
 
     public String todayDate() {

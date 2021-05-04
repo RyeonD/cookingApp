@@ -87,7 +87,6 @@ public class RegisterActivity extends AppCompatActivity {
                                     dialog.show();
                                     join_id.setEnabled(false); //아이디값 고정
                                     validate = true; //검증 완료
-                                    check_button.setBackgroundColor(getResources().getColor(R.color.colorGray));
                                 } else {
                                     AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
                                     dialog = builder.setMessage("이미 존재하는 아이디입니다.").setNegativeButton("확인", null).create();

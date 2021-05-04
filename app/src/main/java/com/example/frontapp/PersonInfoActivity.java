@@ -39,28 +39,22 @@ public class PersonInfoActivity extends AppCompatActivity {
         });
 
         // 검색 페이지로
-        findViewById(R.id.info_search_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra("camera", true);
-                startActivity(intent);
-            }
-        });
-
-        // 고객 지원 페이지로
-        findViewById(R.id.cs_page_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Log.e(TAG, "고객 지원 페이지 확인");
-            }
-        });
+//        findViewById(R.id.info_search_btn).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                intent = new Intent(getApplicationContext(), MainActivity.class);
+//                intent.putExtra("camera", true);
+//                startActivity(intent);
+//            }
+//        });
 
         // 설정 페이지로
         findViewById(R.id.setting_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "설정 페이지 확인");
+                intent = new Intent(getApplicationContext(), SettingActivity.class);
+                startActivity(intent);
             }
         });
 

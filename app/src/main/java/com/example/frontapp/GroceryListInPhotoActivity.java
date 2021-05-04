@@ -124,9 +124,14 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
                     // Handle a completed upload.
                     Log.d(TAG, "Upload is completed. ");
 
-                    RetrofitClass retrofitClass = new RetrofitClass();
+                    RetrofitClass retrofitClass = new RetrofitClass("https://46l1iikk90.execute-api.ap-northeast-2.amazonaws.com/");
                     GroceryListInPhotoInterface api = retrofitClass.retrofit.create(GroceryListInPhotoInterface.class);
-                    Call<String> call = api.getModelResult("sagemaker-deploy-test", fileName);
+                    Map<String, String> map = new HashMap<>();
+                    map.put("bucket", "sagemaker-deploy-test");
+                    map.put("image_url", fileName);
+                    JSONObject json = new JSONObject(map);
+//                    Call<String> call = api.getModelResult("sagemaker-deploy-test", fileName);
+                    Call<String> call = api.getModelResult(json);
                     call.enqueue(new Callback<String>()
                     {
                         @Override

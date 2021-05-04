@@ -44,20 +44,6 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageButton
-                android:id="@+id/info_search_btn"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="#00FFFFFF"
-                app:srcCompat="@drawable/baseline_search_black_24dp" />
-
-            <ImageButton
-                android:id="@+id/cs_page_btn"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="#00FFFFFF"
-                app:srcCompat="@drawable/baseline_headset_mic_black_24dp" />
-
-            <ImageButton
                 android:id="@+id/setting_btn"
                 android:layout_width="50dp"
                 android:layout_height="50dp"

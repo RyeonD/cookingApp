@@ -7,7 +7,7 @@ import retrofit2.http.POST;
 
 public interface CookListInterface {
     @FormUrlEncoded
-    @POST("test/recipe/")
+    @POST("recipe")
     Call<String> getRecipe(
             @Field("grocery_list") String groceryList,
             @Field("main_list") String mainList
