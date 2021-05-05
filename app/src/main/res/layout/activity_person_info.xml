@@ -22,17 +22,18 @@
 
         <Button
             android:id="@+id/mainpage_btn"
+            style="?android:attr/borderlessButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="#FFFFFF"
+            android:fontFamily="@font/bmhannap_pro"
             android:shadowColor="#FFFFFF"
             android:text="YOBI"
             android:textColor="#3598E6"
             android:textSize="30sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            style="?android:attr/borderlessButtonStyle" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
             android:id="@+id/menu_set_layer"
@@ -85,6 +86,7 @@
                 android:id="@+id/user_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/bmhannap_pro"
                 android:text="user_name"
                 android:textColor="#FFFFFF"
                 android:textSize="18sp" />
@@ -93,6 +95,7 @@
                 android:id="@+id/user_id"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/bmhannap_pro"
                 android:text="user_id"
                 android:textColor="#FDFDFD"
                 android:textSize="18sp" />
@@ -114,6 +117,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
+            android:fontFamily="@font/bmhannap_pro"
             android:text="재료 현황"
             android:textColor="#040404"
             android:textSize="20sp"
@@ -156,6 +160,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="15dp"
+                    android:fontFamily="@font/bmhannap_pro"
                     android:text="현재 보관 중"
                     android:textColor="#000000"
                     android:textSize="18sp"
@@ -166,6 +171,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:fontFamily="@font/bmhannap_pro"
                     android:text="TextView"
                     android:textColor="#040404" />
 
@@ -185,6 +191,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="15dp"
+                    android:fontFamily="@font/bmhannap_pro"
                     android:text="유통 기한 만료"
                     android:textColor="#000000"
                     android:textSize="18sp"
@@ -195,6 +202,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:fontFamily="@font/bmhannap_pro"
                     android:text="TextView"
                     android:textColor="#040404" />
 
@@ -206,6 +214,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
+                android:fontFamily="@font/bmhannap_pro"
                 android:text="재료 재고 관리 →" />
         </LinearLayout>
 
@@ -225,6 +234,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
+            android:fontFamily="@font/bmhannap_pro"
             android:text="나의 건강 정보"
             android:textColor="#040404"
             android:textSize="20sp"
@@ -268,6 +278,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="15dp"
+                    android:fontFamily="@font/bmhannap_pro"
                     android:text="알레르기"
                     android:textColor="#000000"
                     android:textSize="18sp"
@@ -278,6 +289,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:fontFamily="@font/bmhannap_pro"
                     android:text="TextView"
                     android:textColor="#040404" />
 
@@ -297,6 +309,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginBottom="15dp"
+                    android:fontFamily="@font/bmhannap_pro"
                     android:text="질병"
                     android:textColor="#000000"
                     android:textSize="18sp"
@@ -307,6 +320,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:fontFamily="@font/bmhannap_pro"
                     android:text="TextView"
                     android:textColor="#040404" />
 
@@ -318,6 +332,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
+                android:fontFamily="@font/bmhannap_pro"
                 android:text="나의 건강 관리 →" />
 
         </LinearLayout>

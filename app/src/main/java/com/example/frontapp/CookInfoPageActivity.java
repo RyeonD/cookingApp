@@ -2,33 +2,23 @@ package com.example.frontapp;
 
 import android.content.Context;
 import android.content.Intent;
-import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.VideoView;
 
-import androidx.annotation.ContentView;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.viewpager2.widget.ViewPager2;
 
 import com.bumptech.glide.Glide;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class CookInfoPageActivity extends AppCompatActivity {
     private static String TAG = "AppCompatActivity";
@@ -140,7 +130,7 @@ public class CookInfoPageActivity extends AppCompatActivity {
     private void outputVideo(String url) {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View videoLayoutView = layoutInflater.inflate(R.layout.video_layout, null, false);
-        ImageView imageView = videoLayoutView.findViewById(R.id.video_image);
+        ImageView imageView = videoLayoutView.findViewById(R.id.video_thumbnail);
 
         videoLinearLayout.addView(videoLayoutView);
 

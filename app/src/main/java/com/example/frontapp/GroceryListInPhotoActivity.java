@@ -69,22 +69,98 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
     private Intent intent, image_intent;
     private File imgFile;
 
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(activity_grocery_list_in_photo);
+        image_intent = getIntent();
+        Bitmap bitmap = (Bitmap) image_intent.getParcelableExtra("img");
+
+        groceryTable = findViewById(R.id.scroll_view_add_layout);
+
+//        // json 파일 try-catch
+//        try {
+//            jsonObject = getPhotoResult();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//         // 가져온 json 파일이 있다면 목록 출력
+//        if(jsonObject != null) {
+//            outputTable();
+//        }
+
+        long time = System.currentTimeMillis();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        Date timeInDate = new Date(time);
+        String fileName = sdf.format(timeInDate);
+        String s3_upload_file = saveBitmapToJpg(bitmap, fileName);
+
+        uploadWithTransferUtility(s3_upload_file);
+
+        // 재료 항목 삭제 버튼
+        findViewById(R.id.delete_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), "삭제", Toast.LENGTH_LONG).show();
+
+                for(int i = arrayList.size()-1; i >= 0; i--) {
+                    Grocery grocery = arrayList.get(i);
+                    if(grocery.isSeletced()) {
+                        arrayList.remove(i);
+                    }
+                }
+
+                adapter = new GroceryListAdapter(arrayList);
+                listView.setAdapter(adapter);
+            }
+        });
+
+        // 재료 항목 추가 버튼
+        findViewById(R.id.add_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 입력창 띄우기
+                groceryAddDialog();
+            }
+        });
+
+        // 다시 사진 찍기
+        findViewById(R.id.grocery_list_in_photo_change_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // 뒤로 가기
+                finish();
+
+                intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.putExtra("camera", true);
+                startActivity(intent);
+            }
+        });
+
+        // NEXT 버튼 클릭(주재료 선택 페이지로 이동)
+        findViewById(R.id.grocery_list_in_photo_search_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                groceryList = adapter.getNext();    // 부위 선택 완료: 재료 목록(String Array), 부위 선택 미완료: null
+
+                // 부위 선택이 완료되었는지 확인
+                if(groceryList != null) {
+                    intent = new Intent(getApplicationContext(), MainGrocerySelectionActivity.class);
+                    intent.putExtra("groceryList", groceryList);
+                    startActivity(intent);
+                }
+                else {
+                    showDialog();
+                }
+            }
+        });
+    }
+
+
     // bitmap to jpg
     public String saveBitmapToJpg(Bitmap bitmap , String name) {
-        /**
-         * 캐시 디렉토리에 비트맵을 이미지파일로 저장하는 코드입니다.
-         *
-         * @version target API 28 ★ API29이상은 테스트 하지않았습니다.★
-         * @param Bitmap bitmap - 저장하고자 하는 이미지의 비트맵
-         * @param String fileName - 저장하고자 하는 이미지의 비트맵
-         *
-         * File storage = 저장이 될 저장소 위치
-         *
-         * return = 저장된 이미지의 경로
-         *
-         * 비트맵에 사용될 스토리지와 이름을 지정하고 이미지파일을 생성합니다.
-         * FileOutputStream으로 이미지파일에 비트맵을 추가해줍니다.
-         */
+
         File storage = getCacheDir();  //  path = /data/user/0/YOUR_PACKAGE_NAME/cache
         String fileName = name + ".jpg";
         imgFile = new File(storage, fileName);
@@ -253,95 +329,6 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
 
         AlertDialog alert = alertBuilder.create();
         alert.show();
-    }
-
-    // 재료 List 확인
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(activity_grocery_list_in_photo);
-        image_intent = getIntent();
-        Bitmap bitmap = (Bitmap) image_intent.getParcelableExtra("img");
-
-        groceryTable = findViewById(R.id.scroll_view_add_layout);
-
-//        // json 파일 try-catch
-//        try {
-//            jsonObject = getPhotoResult();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-//
-//         // 가져온 json 파일이 있다면 목록 출력
-//        if(jsonObject != null) {
-//            outputTable();
-//        }
-
-        long time = System.currentTimeMillis();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        Date timeInDate = new Date(time);
-        String fileName = sdf.format(timeInDate);
-        String s3_upload_file = saveBitmapToJpg(bitmap, fileName);
-
-        uploadWithTransferUtility(s3_upload_file);
-
-        // 재료 항목 삭제 버튼
-        findViewById(R.id.delete_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "삭제", Toast.LENGTH_LONG).show();
-
-                for(int i = arrayList.size()-1; i >= 0; i--) {
-                    Grocery grocery = arrayList.get(i);
-                    if(grocery.isSeletced()) {
-                        arrayList.remove(i);
-                    }
-                }
-
-                adapter = new GroceryListAdapter(arrayList);
-                listView.setAdapter(adapter);
-            }
-        });
-
-        // 재료 항목 추가 버튼
-        findViewById(R.id.add_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 입력창 띄우기
-                groceryAddDialog();
-            }
-        });
-
-        // 다시 사진 찍기
-        findViewById(R.id.grocery_list_in_photo_change_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // 뒤로 가기
-                finish();
-
-                intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra("camera", true);
-                startActivity(intent);
-            }
-        });
-
-        // NEXT 버튼 클릭(주재료 선택 페이지로 이동)
-        findViewById(R.id.grocery_list_in_photo_search_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                groceryList = adapter.getNext();    // 부위 선택 완료: 재료 목록(String Array), 부위 선택 미완료: null
-
-                // 부위 선택이 완료되었는지 확인
-                if(groceryList != null) {
-                    intent = new Intent(getApplicationContext(), MainGrocerySelectionActivity.class);
-                    intent.putExtra("groceryList", groceryList);
-                    startActivity(intent);
-                }
-                else {
-                    showDialog();
-                }
-            }
-        });
     }
 
     // 목록 추가 버튼 클릭 시 추가 할 목록 입력하는 dialog 창

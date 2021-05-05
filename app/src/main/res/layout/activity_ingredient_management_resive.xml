@@ -23,6 +23,7 @@
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
             android:layout_weight="1"
+            android:background="#00FFFFFF"
             app:srcCompat="@drawable/baseline_delete_black_18dp" />
 
         <TextView
@@ -47,6 +48,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
             android:layout_weight="1"
+            android:background="#00FFFFFF"
             android:text="추가" />
 
     </LinearLayout>

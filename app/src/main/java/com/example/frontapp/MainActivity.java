@@ -6,9 +6,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -45,16 +43,17 @@ public class MainActivity extends AppCompatActivity {
     static final int REQUEST_CAMERA = 1;
     final static int TAKE_PICTURE = 1;
     final static int REQUEST_TAKE_PHOTO = 1;
-    private BackPressCloseHandler backPressCloseHandler;
-    Intent intent;
-    Button loginBtn;
-    JSONArray jsonArray;
+
+    private Intent intent;
+    private Button loginBtn;
+    private JSONArray jsonArray;
     boolean autoLoginCheck;
+    long backBtnTime;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main_test);
+        setContentView(R.layout.activity_main);
 
         // 카메라 권한 확인 및 권한 부여
         permissionCheck();
@@ -100,8 +99,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // 뒤로가기
-        backPressCloseHandler = new BackPressCloseHandler(this);
     }
 
     @Override
@@ -115,28 +112,16 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
-        backPressCloseHandler.onBackPressed();
-    }
 
-    public class BackPressCloseHandler {
-        private long backKeyPressedTime = 0;
-        private Activity activity;
-        private Toast toast;
+        long curTime = System.currentTimeMillis();
+        long gapTime = curTime - backBtnTime;
 
-        private BackPressCloseHandler(Activity context) {
-            this.activity = context;
+        if(0 <= gapTime && 2000 >= gapTime) {
+            super.onBackPressed();
         }
-        public void onBackPressed() {
-            if(System.currentTimeMillis() > backKeyPressedTime + 2000) {
-                backKeyPressedTime = System.currentTimeMillis();
-                toast = Toast.makeText(activity, "한 번 더 누르면 종료", Toast.LENGTH_LONG);
-                toast.show();
-                return;
-            }
-            if(System.currentTimeMillis() <= backKeyPressedTime + 2000) {
-                onDestroy();
-            }
+        else {
+            backBtnTime = curTime;
+            Toast.makeText(getApplicationContext(), "한 번 더 누르면 종료", Toast.LENGTH_LONG).show();
         }
     }
 

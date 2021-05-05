@@ -72,13 +72,48 @@ public class CookListActivity extends AppCompatActivity {
         textView.setText(ingredientList[1]);
 
         // 요리 리스트 출력
-//        cookList = findViewById(R.id.scroll_view_layout);
-//        try {
-//            getRecipeData();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        cookList = findViewById(R.id.scroll_view_layout);
 
+        // Local 추천 요리 가져오기
+        try {
+            getLocalCookList();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // 서버에서 추천 요리 받아오기
+//        getCookList();
+    }
+
+    private void getLocalCookList() throws IOException {
+        // 파일 가져오기 - 서버 연결 안 되어있을 때
+        AssetManager assetManager = getAssets();
+        try {
+            InputStream data = assetManager.open("jsons/gamjajeon.json");
+            InputStreamReader dataReader = new InputStreamReader(data);
+            BufferedReader reader = new BufferedReader(dataReader);
+
+            StringBuffer buffer = new StringBuffer();
+            String line = reader.readLine();
+            while (line != null) {
+                buffer.append(line + "\n");
+                line = reader.readLine();
+            }
+
+            // json 객체 생성 및 파싱
+            JSONObject jsonObject = new JSONObject(buffer.toString());
+            Iterator i = jsonObject.keys();
+            while(i.hasNext()){
+                JSONObject cook = jsonObject.getJSONObject(i.next().toString());
+                cookAdd(cook);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // 서버에서 추천 요리 리스트 가져오기
+    private void getCookList() {
         RetrofitClass retrofitClass = new RetrofitClass();
         CookListInterface api = retrofitClass.retrofit.create(CookListInterface.class);
         Call<String> call = api.getRecipe(ingredientList[0], ingredientList[1]);
@@ -100,11 +135,7 @@ public class CookListActivity extends AppCompatActivity {
                             jsonArray = jsonObject.getJSONArray("recipe_list");
                             // 요리 리스트 출력
                             cookList = findViewById(R.id.scroll_view_layout);
-                            try {
-                                getRecipeData();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
+                            getRecipeData();
                         } else {
                             Toast.makeText( getApplicationContext(), "레시피 가져오기에 실패했습니다.", Toast.LENGTH_SHORT ).show();
                             return;
@@ -134,34 +165,9 @@ public class CookListActivity extends AppCompatActivity {
     }
 
     // 레시피 가져와 파싱
-    private void getRecipeData() throws IOException {
-        AssetManager assetManager = getAssets();
-        String filename = "jsons/gamjajeon.json";
-
-        // 파일 가져오기
-//        try {
-//            InputStream data = assetManager.open("jsons/gamjajeon.json");
-//            InputStreamReader dataReader = new InputStreamReader(data);
-//            BufferedReader reader = new BufferedReader(dataReader);
-//
-//            StringBuffer buffer = new StringBuffer();
-//            String line = reader.readLine();
-//            while (line != null) {
-//                buffer.append(line + "\n");
-//                line = reader.readLine();
-//            }
-//
-//            // json 객체 생성 및 파싱
-//            JSONObject jsonObject = new JSONObject(buffer.toString());
-//            Iterator i = jsonObject.keys();
-//            while(i.hasNext()){
-//                JSONObject cook = jsonObject.getJSONObject(i.next().toString());
-//                cookAdd(cook);
-//            }
-//        }
+    private void getRecipeData() {
         try {
             // json 객체 생성 및 파싱
-
             for(int i = 0; i < jsonArray.length(); i++) {
                 JSONObject cook = (JSONObject) jsonArray.get(i);
                 cookAdd(cook);
