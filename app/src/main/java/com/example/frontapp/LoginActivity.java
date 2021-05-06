@@ -30,44 +30,46 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class LoginActivity extends AppCompatActivity {
 
     private static String TAG = "LoginActivity: ";
+    private static final String PREF_USER_ID = "MyAutoLogin";
     private EditText login_id, login_password;
-
-    public static class AutoLogin {
-
-        private static final String PREF_USER_ID = "MyAutoLogin";
-
-        // 모든 엑티비티에서 인스턴스를 얻기위함
-        static SharedPreferences getSharedPreferences(Context ctx) {
-            // return PreferenceManager.getDefaultSharedPreferences(ctx);
-            return ctx.getSharedPreferences(PREF_USER_ID, Context.MODE_PRIVATE);
-        }
-
-        // 계정 정보 저장 : 로그인 시 자동 로그인 여부에 따라 호출 될 메소드, 해당코드는  userId가 저장된다.
-        public static void setUserId(Context ctx, String userId, boolean auto) {
-            SharedPreferences.Editor editor = getSharedPreferences(ctx).edit();
-            editor.putString(PREF_USER_ID, userId);
-            editor.putBoolean("auto", auto);
-            editor.commit();
-        }
-
-        // 저장된 정보 가져오기 : 현재 저장된 정보를 가져오기 위한 메소드
-        public static String getUserId(Context ctx) {
-            return getSharedPreferences(ctx).getString(PREF_USER_ID, "");
-        }
-
-        // 저장된 정보 가져오기 : 현재 저장된 정보를 가져오기 위한 메소드
-        public static boolean getAuto(Context ctx) {
-            return getSharedPreferences(ctx).getBoolean("auto", false);
-        }
-
-        // 로그아웃 : 자동 로그인 해제 및 로그아웃 시 호출 될 메소드
-        public static void clearUserId(Context ctx) {
-            SharedPreferences.Editor editor = getSharedPreferences(ctx).edit();
-            editor.clear();
-            editor.commit();
-        }
-
-    }
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
+//    public static class AutoLogin {
+//
+//        private static final String PREF_USER_ID = "MyAutoLogin";
+//
+//        // 모든 엑티비티에서 인스턴스를 얻기위함
+//        static SharedPreferences getSharedPreferences(Context ctx) {
+//            // return PreferenceManager.getDefaultSharedPreferences(ctx);
+//            return ctx.getSharedPreferences(PREF_USER_ID, Context.MODE_PRIVATE);
+//        }
+//
+//        // 계정 정보 저장 : 로그인 시 자동 로그인 여부에 따라 호출 될 메소드, 해당코드는  userId가 저장된다.
+//        public static void setUserId(Context ctx, String userId, boolean auto) {
+//            SharedPreferences.Editor editor = getSharedPreferences(ctx).edit();
+//            editor.putString(PREF_USER_ID, userId);
+//            editor.putBoolean("auto", auto);
+//            editor.commit();
+//        }
+//
+//        // 저장된 정보 가져오기 : 현재 저장된 정보를 가져오기 위한 메소드
+//        public static String getUserId(Context ctx) {
+//            return getSharedPreferences(ctx).getString(PREF_USER_ID, "");
+//        }
+//
+//        // 저장된 정보 가져오기 : 현재 저장된 정보를 가져오기 위한 메소드
+//        public static boolean getAuto(Context ctx) {
+//            return getSharedPreferences(ctx).getBoolean("auto", false);
+//        }
+//
+//        // 로그아웃 : 자동 로그인 해제 및 로그아웃 시 호출 될 메소드
+//        public static void clearUserId(Context ctx) {
+//            SharedPreferences.Editor editor = getSharedPreferences(ctx).edit();
+//            editor.clear();
+//            editor.commit();
+//        }
+//
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +78,9 @@ public class LoginActivity extends AppCompatActivity {
 
         login_id = findViewById( R.id.login_id );
         login_password = findViewById( R.id.login_password );
+
+        sharedPreferences = getSharedPreferences(PREF_USER_ID, MODE_PRIVATE);
+        editor = sharedPreferences.edit();
 
         // 회원 가입 버튼 클릭
         findViewById( R.id.join_button ).setOnClickListener( new View.OnClickListener() {
@@ -133,16 +138,21 @@ public class LoginActivity extends AppCompatActivity {
                 String UserId = jsonObject.getString( "user_id" );
                 String UserName = jsonObject.getString( "user_name" );
 
+                // sharedPreference 에 저장
+                editor.putString("UserId", UserId);
+                editor.putString("UserName", UserName);
+
                 // 자동 로그인을 위해 ID 저장
                 autoLogin(UserId);
 
                 Toast.makeText( getApplicationContext(), String.format("%s님 환영합니다.", UserName), Toast.LENGTH_SHORT ).show();
                 Intent intent = new Intent( LoginActivity.this, MainActivity.class );
 
-                intent.putExtra( "user_id", UserId );
-                intent.putExtra( "user_name", UserName );
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
                 startActivity( intent );
+                finish();
 
             } else {//로그인 실패시
                 Toast.makeText( getApplicationContext(), "로그인에 실패하셨습니다.", Toast.LENGTH_SHORT ).show();
@@ -156,16 +166,19 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    private void autoLogin(String userId) {
+    private void autoLogin(String UserId) {
         CheckBox checkBox = findViewById(R.id.auto_login);
 
+        // 자동 로그인
         if(checkBox.isChecked()) {
-            Log.e(TAG, "true");
-            AutoLogin.setUserId(getApplicationContext(), userId, true);
+            Log.e(TAG, "auto login succese");
+            editor.putBoolean("autoLogin", true);
         }
         else {
-            AutoLogin.setUserId(getApplicationContext(), userId, false);
+            Log.e(TAG, "auto login fail");
+            editor.putBoolean("autoLogin", false);
         }
 
+        editor.commit();
     }
 }

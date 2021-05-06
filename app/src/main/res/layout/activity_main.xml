@@ -22,7 +22,6 @@
             android:layout_weight="1"
             android:fontFamily="@font/bmhannap_pro"
             android:gravity="center"
-            android:padding="0dp"
             android:text="YOBI"
             android:textColor="#3598E6"
             android:textSize="40sp"

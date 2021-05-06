@@ -34,11 +34,10 @@
             android:layout_marginLeft="10dp"
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp"
+            android:fontFamily="@font/bmhannap_pro"
             android:text="나의 재료 관리"
             android:textColor="#3598E6"
-            android:textSize="30sp"
+            android:textSize="40sp"
             android:textStyle="bold" />
 
         <ImageButton
@@ -68,13 +67,14 @@
             android:layout_height="wrap_content"
             android:background="#E8E5E5"
             android:gravity="center"
-            android:padding="13dp">
+            android:padding="5dp">
 
             <TextView
                 android:id="@+id/ingredient_name_title2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:fontFamily="@font/bmhannap_pro"
                 android:text="재료"
                 android:textColor="#000000"
                 android:textSize="18sp" />
@@ -89,6 +89,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
+                    android:fontFamily="@font/bmhannap_pro"
                     android:gravity="center"
                     android:text="신선도"
                     android:textColor="#000000"
@@ -101,6 +102,7 @@
                     android:id="@+id/expiration_date_title2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:fontFamily="@font/bmhannap_pro"
                     android:gravity="center"
                     android:text="(신선, 양호, 위험, 만료)"
                     android:textColor="#000000"

@@ -139,6 +139,7 @@
             android:id="@+id/grocery_info_layer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:gravity="center"
             android:orientation="horizontal"
             android:padding="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -215,7 +216,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:fontFamily="@font/bmhannap_pro"
-                android:text="재료 재고 관리 →" />
+                android:text="재료 재고 관리" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -256,6 +257,7 @@
             android:id="@+id/health_info_layer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:gravity="center"
             android:orientation="horizontal"
             android:padding="10dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -333,7 +335,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:fontFamily="@font/bmhannap_pro"
-                android:text="나의 건강 관리 →" />
+                android:text="나의 건강 관리" />
 
         </LinearLayout>
 

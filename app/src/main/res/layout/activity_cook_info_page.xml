@@ -35,11 +35,9 @@
             android:layout_marginRight="10dp"
             android:fontFamily="@font/bmhannap_pro"
             android:gravity="center"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp"
             android:text="YOBI"
             android:textColor="#3598E6"
-            android:textSize="30sp"
+            android:textSize="40sp"
             android:textStyle="bold" />
 
         <ImageButton
@@ -120,7 +118,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="2dp"
-                    android:text="레시피 보러가기 →"
+                    android:fontFamily="@font/bmhannap_pro"
+                    android:text="레시피 보기"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

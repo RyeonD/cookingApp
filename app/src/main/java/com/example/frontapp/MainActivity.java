@@ -6,7 +6,9 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -31,6 +33,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.zip.Inflater;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -38,6 +41,7 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private static String TAG = "MainActivity: ";
+
     static final int PERMISSIONS_REQUEST_CODE = 1001;
     private String[] PERMISSIONS  = {Manifest.permission.CAMERA};
     static final int REQUEST_CAMERA = 1;
@@ -47,8 +51,21 @@ public class MainActivity extends AppCompatActivity {
     private Intent intent;
     private Button loginBtn;
     private JSONArray jsonArray;
-    boolean autoLoginCheck;
-    long backBtnTime;
+
+    private static final String PREF_USER_ID = "MyAutoLogin";
+    SharedPreferences sharedPreferencesUser;
+    private boolean autoLoginCheck;
+
+    private static final String PREF_USER__INGREDIENT = "MyIngredientList";
+    SharedPreferences sharedPreferencesUserIngredient;
+
+    private long backKeyPressedTime = 0;
+    private Toast toast;
+
+    private int fresh_first;    // 신선
+    private int fresh_second;   // 양호
+    private int fresh_third;   // 위험
+    private int fresh_fourth;   // 만료
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,8 +82,14 @@ public class MainActivity extends AppCompatActivity {
 
         // 자동 로그인 확인
         loginBtn = findViewById(R.id.login_btn);
-        checkAutoLogin();
+        sharedPreferencesUser = getSharedPreferences(PREF_USER_ID, MODE_PRIVATE);
+        fresh_first = 0;
+        fresh_second = 0;
+        fresh_third = 0;
+        fresh_fourth = 0;
+        loginCheck();
 
+        // login button click 동작 - 로그인 페이지로
         loginBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -75,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                 }
                 else {
-                    intent = new Intent(getApplicationContext(), IngredientManagementActivity.class);
+                    intent = new Intent(getApplicationContext(), MyIngredientListActivity.class);
                     startActivity(intent);
                 }
             }
@@ -93,71 +116,19 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.info_page_btn2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                intent = new Intent(getApplicationContext(), GroceryListInPhotoActivity.class);
+//                intent = new Intent(getApplicationContext(), PersonInfoActivity.class);
                 intent = new Intent(getApplicationContext(), PersonInfoActivity.class);
                 startActivity(intent);
             }
         });
 
     }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if(!autoLoginCheck) {
-            LoginActivity.AutoLogin.clearUserId(getApplicationContext());
-        }
-        finish();
-    }
-
-    @Override
-    public void onBackPressed() {
-
-        long curTime = System.currentTimeMillis();
-        long gapTime = curTime - backBtnTime;
-
-        if(0 <= gapTime && 2000 >= gapTime) {
-            super.onBackPressed();
-        }
-        else {
-            backBtnTime = curTime;
-            Toast.makeText(getApplicationContext(), "한 번 더 누르면 종료", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private void setCircleText(boolean checkLogin) {
-        ConstraintLayout textInCircle = findViewById(R.id.change_circle_text);
-        LayoutInflater inflater = (LayoutInflater) getSystemService(getApplicationContext().LAYOUT_INFLATER_SERVICE);
-        if(checkLogin) {
-            // 자동 로그인 되면
-            loginBtn.setText("나의 재료 보러가기");
-
-            LinearLayout linearLayout = (LinearLayout) inflater.inflate(R.layout.main_circle_login_complete_layout, null, false);
-            TextView first = linearLayout.findViewById(R.id.level1);
-            TextView second = linearLayout.findViewById(R.id.level2);
-            TextView third = linearLayout.findViewById(R.id.level3);
-            TextView fourth = linearLayout.findViewById(R.id.level4);
-
-            first.setText("신선 - 2");
-            second.setText("양호 - 1");
-            third.setText("위험 - 3");
-            fourth.setText("만료 - 0");
-
-            textInCircle.addView(linearLayout);
-        }
-        else {
-            loginBtn.setText("로그인");
-            ConstraintLayout constraintLayout = (ConstraintLayout) inflater.inflate(R.layout.main_circle_request_login_layout, null, false);
-            textInCircle.addView(constraintLayout);
-        }
-    }
-
-    private void checkAutoLogin(){
-        String UserId = LoginActivity.AutoLogin.getUserId(getApplicationContext());
-        autoLoginCheck = LoginActivity.AutoLogin.getAuto(getApplicationContext());
+    // 자동 로그인 확인
+    private void loginCheck(){
+        String UserId = sharedPreferencesUser.getString("UserId", "");
+        autoLoginCheck = sharedPreferencesUser.getBoolean("autoLogin", false);
 
         if(!UserId.isEmpty()) {
-            setCircleText(true);
             setPesonalGrocery(UserId);
         }
         else {
@@ -165,6 +136,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // 서버에서 나의 재료 재고 목록 가져오기
     private void setPesonalGrocery(String UserId) {
         // 데이터 가져오기
         RetrofitClass retrofitClass = new RetrofitClass();
@@ -186,10 +158,16 @@ public class MainActivity extends AppCompatActivity {
                         Log.e(TAG, jsonObject.toString());
                         if (jsonObject.getString("success").equals("true")) {
                             jsonArray = jsonObject.getJSONArray("result");
-                            // 요리 리스트 출력
-//                            cookList = findViewById(R.id.scroll_view_layout);
+
+                            sharedPreferencesUserIngredient = getSharedPreferences(PREF_USER__INGREDIENT, MODE_PRIVATE);
+                            SharedPreferences.Editor editor = sharedPreferencesUserIngredient.edit();
+                            editor.putString("ingredientList", jsonArray.toString());
+                            editor.commit();
+
+                            // 받아온 데이터(나의 재료 재고 목록) 전체 출력
                             Log.e(TAG, jsonArray.toString());
-                            getGroceryList();
+                            // 받아온 데이터 출력
+                            getMyGroceryList();
                         } else {
                             Toast.makeText( getApplicationContext(), "레시피 가져오기에 실패했습니다.", Toast.LENGTH_SHORT ).show();
                             return;
@@ -210,22 +188,80 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void getGroceryList() {
+    // 재료 재고 목록 가져와 파싱 - 수정 필요
+    private void getMyGroceryList() {
         try {
-            Log.e(TAG, "확인");
             // json 객체 생성 및 파싱
             for(int i = 0; i < jsonArray.length(); i++) {
                 JSONObject cook = (JSONObject) jsonArray.get(i);
-                Log.e(TAG, cook.getClass().toString());
-                Log.e(TAG, cook.toString());
+                switch (cook.getString("freshness")) {
+                    case "신선": fresh_first++; break;
+                    case "양호": fresh_second++; break;
+                    case "위험": fresh_third++; break;
+                    default: fresh_fourth++; break;
+                }
             }
+            setCircleText(true);
         }
         catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
+    // 메인 화면 재료 현황
+    private void setCircleText(boolean checkLogin) {
+        ConstraintLayout textInCircle = findViewById(R.id.change_circle_text);
+        LayoutInflater inflater = (LayoutInflater) getSystemService(getApplicationContext().LAYOUT_INFLATER_SERVICE);
+        if(checkLogin) {
+            // 로그인 되면
+            loginBtn.setText("나의 재료 보러가기");
 
+            LinearLayout linearLayout = (LinearLayout) inflater.inflate(R.layout.main_circle_login_complete_layout, null, false);
+            TextView first = linearLayout.findViewById(R.id.level1);
+            TextView second = linearLayout.findViewById(R.id.level2);
+            TextView third = linearLayout.findViewById(R.id.level3);
+            TextView fourth = linearLayout.findViewById(R.id.level4);
+
+            first.setText(String.format("신선 - %d", fresh_first));
+            second.setText(String.format("양호 - %d", fresh_second));
+            third.setText(String.format("위험 - %d", fresh_third));
+            fourth.setText(String.format("만료 - %d", fresh_fourth));
+
+            textInCircle.addView(linearLayout);
+        }
+        else {
+            loginBtn.setText("로그인");
+            ConstraintLayout constraintLayout = (ConstraintLayout) inflater.inflate(R.layout.main_circle_request_login_layout, null, false);
+            textInCircle.addView(constraintLayout);
+        }
+    }
+
+    // 뒤로가기 설정(한번은 알림, 두번은 종료)
+    @Override
+    public void onBackPressed() {
+//        super.onBackPressed();
+
+        if (System.currentTimeMillis() > backKeyPressedTime + 2000) {
+            backKeyPressedTime = System.currentTimeMillis();
+            toast = Toast.makeText(this, "\'뒤로\' 버튼을 한번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT);
+            toast.show();
+            return;
+        }
+        if (System.currentTimeMillis() <= backKeyPressedTime + 2000) {
+            autoLoginCheck();
+            finish();
+            toast.cancel();
+        }
+    }
+
+    // 자동 로그인 미체크 시 로그아웃
+    public void autoLoginCheck() {
+        if(!autoLoginCheck) {
+            SharedPreferences.Editor editor = sharedPreferencesUser.edit();
+            editor.clear();
+            editor.commit();
+        }
+    }
 
     // 카메라 실행
     public void startCamera() {

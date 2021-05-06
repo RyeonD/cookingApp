@@ -54,7 +54,6 @@ public class CookListActivity extends AppCompatActivity {
     String cook_name;
     String cook_img;
     String cook_ingredients;
-    String cook_recipes;
     String[] ingredientList;
 
     @Override
@@ -64,8 +63,6 @@ public class CookListActivity extends AppCompatActivity {
 
         intent = getIntent();
         ingredientList = intent.getStringArrayExtra("ingredientList");
-        Log.e(TAG, "ingredientList");
-        Log.e(TAG, ingredientList[0] + " / " + ingredientList[1]);
 
         // 검색 결과 페이지 상단에 주재료 보여줌
         TextView textView = findViewById(R.id.main_grocery_list);
@@ -75,18 +72,19 @@ public class CookListActivity extends AppCompatActivity {
         cookList = findViewById(R.id.scroll_view_layout);
 
         // Local 추천 요리 가져오기
-        try {
-            getLocalCookList();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        try {
+//            getLocalCookList();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         // 서버에서 추천 요리 받아오기
-//        getCookList();
+        getCookList();
     }
 
+    // 파일 가져오기 - 서버 연결 안 되어있을 때
     private void getLocalCookList() throws IOException {
-        // 파일 가져오기 - 서버 연결 안 되어있을 때
+
         AssetManager assetManager = getAssets();
         try {
             InputStream data = assetManager.open("jsons/gamjajeon.json");
@@ -135,7 +133,7 @@ public class CookListActivity extends AppCompatActivity {
                             jsonArray = jsonObject.getJSONArray("recipe_list");
                             // 요리 리스트 출력
                             cookList = findViewById(R.id.scroll_view_layout);
-                            getRecipeData();
+                            getCookData();
                         } else {
                             Toast.makeText( getApplicationContext(), "레시피 가져오기에 실패했습니다.", Toast.LENGTH_SHORT ).show();
                             return;
@@ -165,18 +163,13 @@ public class CookListActivity extends AppCompatActivity {
     }
 
     // 레시피 가져와 파싱
-    private void getRecipeData() {
+    private void getCookData() {
         try {
             // json 객체 생성 및 파싱
             for(int i = 0; i < jsonArray.length(); i++) {
                 JSONObject cook = (JSONObject) jsonArray.get(i);
                 cookAdd(cook);
             }
-//            while(i.hasNext()){
-//                JSONObject cook = jsonObject.getJSONObject(i.next().toString());
-//                cookAdd(cook);
-//            }
-
         }
         catch (JSONException e) {
             e.printStackTrace();
@@ -206,7 +199,6 @@ public class CookListActivity extends AppCompatActivity {
         String input = new String();
         for(String s : ingredientList[1].split(" ")) {
             if (cook_ingredients.contains(s)) {
-                Log.e(TAG, s);
                 input += (s + " ");
             }
         }

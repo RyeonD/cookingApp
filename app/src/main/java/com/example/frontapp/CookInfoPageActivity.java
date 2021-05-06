@@ -30,6 +30,7 @@ public class CookInfoPageActivity extends AppCompatActivity {
     private String recipe;
     private String recipe_imagelink;
     private String youtubelink;
+    private String youtubeimage;
     private LinearLayout videoLinearLayout;
 
     @Override
@@ -45,12 +46,6 @@ public class CookInfoPageActivity extends AppCompatActivity {
 
         // 요리 정보 출력
         outputCookInfo();
-
-        // 비디오 출력
-        videoLinearLayout = findViewById(R.id.video_linearlayout);
-        String [] videoUrlList = youtubelink.replaceAll("[\\\\|\\[|\\]|\"]","").replace(","," ").split(" ");
-        for(String url : videoUrlList)
-            outputVideo(url);
 
         findViewById(R.id.recipe_btn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +82,7 @@ public class CookInfoPageActivity extends AppCompatActivity {
         imagelink = intent.getStringExtra("imagelink");
         ingredient = intent.getStringExtra("ingredient");
         youtubelink = intent.getStringExtra("youtubelink");
+        youtubeimage = intent.getStringExtra("youtubeimage");
 
         // 레시피 페이지로 내보낼 데이터
         recipe = intent.getStringExtra("recipe");
@@ -99,6 +95,15 @@ public class CookInfoPageActivity extends AppCompatActivity {
 
         // 요리 이름 및 재료 삽입
         addCookText();
+
+        // 비디오
+        videoLinearLayout = findViewById(R.id.video_linearlayout);
+        String [] videoLinkList = youtubelink.replaceAll("[\\\\|\\[|\\]|\"]","").split(",");
+        String [] videoImageLinkList = youtubeimage.replaceAll("[\\\\|\\[|\\]|\"]","").split(",");
+
+        for(int i = 0; i < videoLinkList.length; i++) {
+            addVideo(videoLinkList[i], videoImageLinkList[i]);
+        }
     }
 
     // 이미지 삽입
@@ -127,17 +132,25 @@ public class CookInfoPageActivity extends AppCompatActivity {
     }
 
     // 비디오 출력
-    private void outputVideo(String url) {
+    private void addVideo(String videoUrl, String imageUrl) {
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View videoLayoutView = layoutInflater.inflate(R.layout.video_layout, null, false);
         ImageView imageView = videoLayoutView.findViewById(R.id.video_thumbnail);
+
+        try {
+            URL url = new URL(imageUrl);       // url 이미지 가져옴
+            Glide.with(this).load(url).into(imageView);     // 가져와서 이미지 뷰에 추가
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        imageView.setScaleType(ImageView.ScaleType.FIT_XY);     // 이미지 뷰 크기에 맞춰 이미지 확대
 
         videoLinearLayout.addView(videoLayoutView);
 
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl));
                 startActivity(intent);
             }
         });
