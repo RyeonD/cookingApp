@@ -80,6 +80,29 @@ public class MainActivity extends AppCompatActivity {
         if(intent.getBooleanExtra("camera", false))
             startCamera();
 
+        // search button click 동작 - 카메라 실행
+        findViewById(R.id.image_search_btn2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view){
+                startCamera();
+            }
+        });
+
+        // person info button click 동작 - 수정 필요
+        findViewById(R.id.info_page_btn2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                intent = new Intent(getApplicationContext(), PersonInfoActivity.class);
+                intent = new Intent(getApplicationContext(), PersonInfoActivity.class);
+                startActivity(intent);
+            }
+        });
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         // 자동 로그인 확인
         loginBtn = findViewById(R.id.login_btn);
         sharedPreferencesUser = getSharedPreferences(PREF_USER_ID, MODE_PRIVATE);
@@ -103,43 +126,27 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-
-        // search button click 동작 - 카메라 실행
-        findViewById(R.id.image_search_btn2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view){
-                startCamera();
-            }
-        });
-
-        // person info button click 동작 - 수정 필요
-        findViewById(R.id.info_page_btn2).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                intent = new Intent(getApplicationContext(), PersonInfoActivity.class);
-                intent = new Intent(getApplicationContext(), PersonInfoActivity.class);
-                startActivity(intent);
-            }
-        });
-
     }
+
     // 자동 로그인 확인
     private void loginCheck(){
         String UserId = sharedPreferencesUser.getString("UserId", "");
         autoLoginCheck = sharedPreferencesUser.getBoolean("autoLogin", false);
 
-        if(!UserId.isEmpty()) {
-            setPesonalGrocery(UserId);
+        Log.e(TAG, UserId);
+        if(UserId.length() == 0) {
+            setCircleText(false);
         }
         else {
-            setCircleText(false);
+            setPesonalGrocery(UserId);
         }
     }
 
     // 서버에서 나의 재료 재고 목록 가져오기
+
     private void setPesonalGrocery(String UserId) {
         // 데이터 가져오기
-        RetrofitClass retrofitClass = new RetrofitClass();
+        RetrofitClass retrofitClass = new RetrofitClass(5000);
         MainInterface api = retrofitClass.retrofit.create(MainInterface.class);
         Call<String> call = api.getUserId(UserId);
         call.enqueue(new Callback<String>()

@@ -53,53 +53,6 @@ public class CookRecipePageActivity extends AppCompatActivity {
         // 받아온 데이터 출력
         outputRecipe();
 
-        // 좌우 슬라이드 - 추후 구현 예정
-//        detector = new GestureDetector(this, new GestureDetector.OnGestureListener() {
-//            @Override
-//            public boolean onDown(MotionEvent e) {
-//                return false;
-//            }
-//
-//            @Override
-//            public void onShowPress(MotionEvent e) {
-//
-//            }
-//
-//            @Override
-//            public boolean onSingleTapUp(MotionEvent e) {
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-//                if(distanceX < 0) {
-//                    intent = new Intent(getApplicationContext(), CookInfoPageActivity.class);
-//                    startActivity(intent);
-//                    overridePendingTransition(android.R.anim.slide_out_right, android.R.anim.fade_in);
-//                }
-//                return true;
-//            }
-//
-//            @Override
-//            public void onLongPress(MotionEvent e) {
-//
-//            }
-//
-//            @Override
-//            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-//                return false;
-//            }
-//        });
-//
-//        View view = findViewById(R.id.linearLayout10);
-//        view.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                detector.onTouchEvent(event);
-//                return true;
-//            }
-//        });
-
         // 뒤로가기 버튼 클릭 시 동작
         findViewById(R.id.recipe_back_btn).setOnClickListener(new View.OnClickListener() {
             @Override

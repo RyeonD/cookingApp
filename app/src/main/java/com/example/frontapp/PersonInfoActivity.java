@@ -62,7 +62,7 @@ public class PersonInfoActivity extends AppCompatActivity {
         findViewById(R.id.grocery_manage_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                intent = new Intent(getApplicationContext(), IngredientManagementActivity.class);
+                intent = new Intent(getApplicationContext(), MyIngredientListActivity.class);
                 startActivity(intent);
             }
         });

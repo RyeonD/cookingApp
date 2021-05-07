@@ -112,7 +112,7 @@ public class CookListActivity extends AppCompatActivity {
 
     // 서버에서 추천 요리 리스트 가져오기
     private void getCookList() {
-        RetrofitClass retrofitClass = new RetrofitClass();
+        RetrofitClass retrofitClass = new RetrofitClass(5001);
         CookListInterface api = retrofitClass.retrofit.create(CookListInterface.class);
         Call<String> call = api.getRecipe(ingredientList[0], ingredientList[1]);
         call.enqueue(new Callback<String>()

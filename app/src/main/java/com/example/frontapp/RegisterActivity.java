@@ -65,7 +65,7 @@ public class RegisterActivity extends AppCompatActivity {
                     return;
                 }
 
-                RetrofitClass retrofitClass = new RetrofitClass();
+                RetrofitClass retrofitClass = new RetrofitClass(5002);
                 ValidateInterface api = retrofitClass.retrofit.create(ValidateInterface.class);
                 Call<String> call = api.getUserValidate(UserId);
                 call.enqueue(new Callback<String>()

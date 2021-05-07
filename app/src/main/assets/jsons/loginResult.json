@@ -2,5 +2,7 @@
   {"freshness":"신선","id":"yomi","shelf_life":10,"sortkey":"계란"},
   {"freshness":"위험","id":"yomi","shelf_life":2,"sortkey":"마요네즈"},
   {"freshness":"양호","id":"yomi","shelf_life":4,"sortkey":"식빵"},
-  {"freshness":"만료","id":"yomi","shelf_life":-1,"sortkey":"참치"}
+  {"freshness":"만료","id":"yomi","shelf_life":-1,"sortkey":"참치"},
+  {"freshness":"위험","id":"yomi","shelf_life":2,"sortkey":"돼지고기"},
+  {"freshness":"신선","id":"yomi","shelf_life":2,"sortkey":"김치"}
 ]

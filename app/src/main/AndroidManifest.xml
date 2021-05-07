@@ -31,9 +31,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PhotoCheckActivity" />
         <activity android:name=".PersonInfoActivity" />
-        <activity android:name=".IngredientManagementActivity" />
         <activity android:name=".GroceryListInPhotoActivity" />
         <activity android:name=".MainGrocerySelectionActivity" />
         <activity android:name=".CookListActivity" />
@@ -41,7 +39,6 @@
         <activity android:name=".CookRecipePageActivity" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".GroceryListResiveActivity" />
         <activity android:name=".MainActivity" />
         <activity android:name=".SettingActivity" />
         <activity android:name=".MyIngredientListActivity" />
