@@ -226,13 +226,11 @@ public class MainActivity extends AppCompatActivity {
             LinearLayout linearLayout = (LinearLayout) inflater.inflate(R.layout.main_circle_login_complete_layout, null, false);
             TextView first = linearLayout.findViewById(R.id.level1);
             TextView second = linearLayout.findViewById(R.id.level2);
-            TextView third = linearLayout.findViewById(R.id.level3);
-            TextView fourth = linearLayout.findViewById(R.id.level4);
+            TextView third = linearLayout.findViewById(R.id.level4);
 
             first.setText(String.format("신선 - %d", fresh_first));
             second.setText(String.format("양호 - %d", fresh_second));
             third.setText(String.format("위험 - %d", fresh_third));
-            fourth.setText(String.format("만료 - %d", fresh_fourth));
 
             textInCircle.addView(linearLayout);
         }

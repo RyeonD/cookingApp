@@ -8,7 +8,7 @@ import retrofit2.http.POST;
 public interface MyIngredientCheck {
 
     @FormUrlEncoded
-    @POST("chk_user_ingredient")
+    @POST("ingredient_user_chk")
     Call<String> getCheckIngredient(
             @Field("ingredient") String ingredient
     );

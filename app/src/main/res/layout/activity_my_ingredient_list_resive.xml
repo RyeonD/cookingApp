@@ -6,14 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/linearLayout2"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout13"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp"
+        android:paddingLeft="10dp"
+        android:paddingRight="15dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -22,25 +20,30 @@
             android:id="@+id/ingredient_management_text3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="50dp"
-            android:layout_marginRight="50dp"
             android:fontFamily="@font/bmhannap_pro"
+            android:gravity="center"
             android:text="나의 재료 수정"
-            android:textColor="#3598E6"
+            android:textColor="#85B7E4"
             android:textSize="40sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/ingredient_change_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="80dp"
+            android:layout_height="40dp"
             android:layout_weight="1"
+            android:background="@drawable/small_button"
             android:fontFamily="@font/bmhannap_pro"
             android:text="완료"
-            android:textColor="#000000"
-            android:textSize="18sp" />
-
-    </LinearLayout>
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout10"
@@ -51,7 +54,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout13">
 
         <TextView
             android:id="@+id/textView6"
@@ -106,19 +109,25 @@
         <Button
             android:id="@+id/ingredient_page_add_btn"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
+            android:layout_margin="10dp"
             android:layout_weight="1"
+            android:background="@drawable/button"
             android:fontFamily="@font/bmhannap_pro"
             android:text="추가"
+            android:textColor="#FFFFFF"
             android:textSize="18sp" />
 
         <Button
             android:id="@+id/ingredient_page_delete_btn"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="60dp"
+            android:layout_margin="10dp"
             android:layout_weight="1"
+            android:background="@drawable/button"
             android:fontFamily="@font/bmhannap_pro"
             android:text="삭제"
+            android:textColor="#FFFFFF"
             android:textSize="18sp" />
     </LinearLayout>
 

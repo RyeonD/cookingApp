@@ -8,7 +8,7 @@ import retrofit2.http.PUT;
 public interface MyIngredientList {
 
     @FormUrlEncoded
-    @PUT("user_ingredient")
+    @PUT("ingredient_user")
     Call<String> getUserIngredientList(
             @Field("user_id") String UserId,
             @Field("add") String addIngredientList,

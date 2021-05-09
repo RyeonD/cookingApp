@@ -36,7 +36,7 @@
             android:fontFamily="@font/bmhannap_pro"
             android:gravity="center"
             android:text="YOBI"
-            android:textColor="#3598E6"
+            android:textColor="#85B7E4"
             android:textSize="40sp"
             android:textStyle="bold" />
 
@@ -118,8 +118,10 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="2dp"
+                    android:background="@drawable/small_button"
                     android:fontFamily="@font/bmhannap_pro"
                     android:text="레시피 보기"
+                    android:textColor="#FFFFFF"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />

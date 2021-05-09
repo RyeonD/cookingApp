@@ -36,16 +36,6 @@
         android:textSize="18sp" />
 
     <TextView
-        android:id="@+id/level3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/bmhannap_pro"
-        android:gravity="center"
-        android:text="TextView"
-        android:textColor="#FF6700"
-        android:textSize="18sp" />
-
-    <TextView
         android:id="@+id/level4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

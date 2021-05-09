@@ -13,9 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="20dp"
-        android:paddingTop="7dp"
         android:paddingRight="10dp"
-        android:paddingBottom="7dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -29,8 +27,8 @@
             android:fontFamily="@font/bmhannap_pro"
             android:shadowColor="#FFFFFF"
             android:text="YOBI"
-            android:textColor="#3598E6"
-            android:textSize="30sp"
+            android:textColor="#85B7E4"
+            android:textSize="40sp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -212,11 +210,14 @@
             <Button
                 android:id="@+id/grocery_manage_btn"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
+                android:background="@drawable/button"
                 android:fontFamily="@font/bmhannap_pro"
-                android:text="재료 재고 관리" />
+                android:text="재료 재고 관리"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -331,11 +332,14 @@
             <Button
                 android:id="@+id/health_manage_btn"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
+                android:background="@drawable/button"
                 android:fontFamily="@font/bmhannap_pro"
-                android:text="나의 건강 관리" />
+                android:text="나의 건강 관리"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp" />
 
         </LinearLayout>
 

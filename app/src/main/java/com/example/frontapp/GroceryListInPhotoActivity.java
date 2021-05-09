@@ -271,7 +271,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
     // AWS에서 가져온 json 파일에서 필요한 데이터 빼오기
     private JSONObject getPhotoResult() throws IOException {
         AssetManager assetManager = getAssets();
-        String filename = "jsons/cameraResult.json";
+        String filename = "jsons/cameraresult.json";
 
         // 파일 가져오기
         try {

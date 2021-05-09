@@ -3,12 +3,8 @@ package com.example.frontapp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
-import android.graphics.Color;
 import android.os.Build;
-import android.media.Image;
 import android.os.Bundle;
-import android.util.Log;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,14 +31,10 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class CookListActivity extends AppCompatActivity {
     private static String TAG = "CookListActivity";
@@ -87,7 +79,7 @@ public class CookListActivity extends AppCompatActivity {
 
         AssetManager assetManager = getAssets();
         try {
-            InputStream data = assetManager.open("jsons/gamjajeon.json");
+            InputStream data = assetManager.open("jsons/cookList.json");
             InputStreamReader dataReader = new InputStreamReader(data);
             BufferedReader reader = new BufferedReader(dataReader);
 
@@ -193,7 +185,7 @@ public class CookListActivity extends AppCompatActivity {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View cookView = inflater.inflate(R.layout.cook_info, null);
         TextView mainGrocery = cookView.findViewById(R.id.main_grocery_in_cook_list);
-        TextView name = cookView.findViewById(R.id.textView);
+        TextView name = cookView.findViewById(R.id.join_title);
         ImageView imageView = cookView.findViewById(R.id.imageView);
 
         String input = new String();

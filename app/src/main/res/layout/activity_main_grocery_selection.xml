@@ -25,10 +25,8 @@
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
             android:fontFamily="@font/bmhannap_pro"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp"
             android:text="인식된 재료 목록"
-            android:textColor="#3598E6"
+            android:textColor="#85B7E4"
             android:textSize="30sp"
             android:textStyle="bold" />
 
@@ -104,7 +102,7 @@
         <Button
             android:id="@+id/grocery_selection_prev_btn"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="60dp"
             android:layout_gravity="center"
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
@@ -113,11 +111,10 @@
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
-            android:background="#98CCF4"
+            android:background="@drawable/button"
             android:cursorVisible="false"
             android:fontFamily="@font/bmhannap_pro"
             android:gravity="center"
-            android:padding="15dp"
             android:text="뒤로 가기"
             android:textColor="#FFFFFF"
             android:textSize="18sp" />
@@ -125,7 +122,7 @@
         <Button
             android:id="@+id/grocery_selection_search_btn"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="60dp"
             android:layout_gravity="center"
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
@@ -134,11 +131,10 @@
             android:layout_marginRight="10dp"
             android:layout_marginBottom="10dp"
             android:layout_weight="1"
-            android:background="#98CCF4"
+            android:background="@drawable/button"
             android:cursorVisible="false"
             android:fontFamily="@font/bmhannap_pro"
             android:gravity="center"
-            android:padding="15dp"
             android:text="요리 검색"
             android:textColor="#FFFFFF"
             android:textSize="18sp"></Button>

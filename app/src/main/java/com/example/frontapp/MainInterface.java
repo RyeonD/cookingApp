@@ -8,7 +8,7 @@ import retrofit2.http.POST;
 
 public interface MainInterface {
     @FormUrlEncoded
-    @POST("user_ingredient_all")
+    @POST("ingredient_user_all")
     Call<String> getUserId(
             @Field("user_id") String UserId
     );

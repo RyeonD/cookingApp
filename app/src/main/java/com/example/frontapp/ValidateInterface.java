@@ -7,7 +7,7 @@ import retrofit2.http.POST;
 
 public interface ValidateInterface {
     @FormUrlEncoded
-    @POST("overlap")
+    @POST("user_overlap")
     Call<String> getUserValidate(
             @Field("user_id") String UserId
     );

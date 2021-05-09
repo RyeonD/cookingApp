@@ -8,12 +8,7 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
-    </style>
-    <style name="defaultButton" parent="Widget.AppCompat.Button.Colored">
-        <item name="android:colorAccent">@color/colorAccent</item>
+        <item name="android:fontFamily">@font/bmhannap_pro</item>
     </style>
 
-    <style name="urgentButton" parent="Widget.AppCompat.Button.Colored">
-        <item name="android:colorPrimaryDark">@color/colorPrimaryDark</item>
-    </style>
 </resources>
