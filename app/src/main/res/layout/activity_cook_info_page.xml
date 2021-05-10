@@ -95,7 +95,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="13dp"
-                android:paddingRight="13dp">
+                android:paddingTop="5dp"
+                android:paddingRight="13dp"
+                android:paddingBottom="5dp">
 
                 <TextView
                     android:id="@+id/cook_name"
@@ -166,7 +168,7 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/bmhannap_pro"
                     android:text="TextView"
-                    android:textColor="#000000"
+                    android:textColor="#424141"
                     android:textSize="18sp" />
             </LinearLayout>
 
@@ -175,6 +177,37 @@
                 android:layout_height="5dp"
                 android:background="#DFDFDF">
 
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="13dp">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/bmhannap_pro"
+                    android:text="관련 동영상"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="0dp"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="7dp"
+                    android:background="#DFDFDF"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/textView">
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.constraintlayout.widget.ConstraintLayout>
 
             <HorizontalScrollView

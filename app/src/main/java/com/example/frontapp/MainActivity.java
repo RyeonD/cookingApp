@@ -6,7 +6,6 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -31,10 +30,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.zip.Inflater;
-
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -54,18 +49,20 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String PREF_USER_ID = "MyAutoLogin";
     SharedPreferences sharedPreferencesUser;
+
     private boolean autoLoginCheck;
 
     private static final String PREF_USER__INGREDIENT = "MyIngredientList";
     SharedPreferences sharedPreferencesUserIngredient;
 
+    SharedPreferences.Editor editor;
+
     private long backKeyPressedTime = 0;
     private Toast toast;
 
-    private int fresh_first;    // 신선
-    private int fresh_second;   // 양호
-    private int fresh_third;   // 위험
-    private int fresh_fourth;   // 만료
+    private int fresh_first;    // 양호
+    private int fresh_second;   // 위험
+    private int fresh_third;   // 만료
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
         fresh_first = 0;
         fresh_second = 0;
         fresh_third = 0;
-        fresh_fourth = 0;
         loginCheck();
 
         // login button click 동작 - 로그인 페이지로
@@ -143,7 +139,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     // 서버에서 나의 재료 재고 목록 가져오기
-
     private void setPesonalGrocery(String UserId) {
         // 데이터 가져오기
         RetrofitClass retrofitClass = new RetrofitClass(5000);
@@ -167,7 +162,7 @@ public class MainActivity extends AppCompatActivity {
                             jsonArray = jsonObject.getJSONArray("result");
 
                             sharedPreferencesUserIngredient = getSharedPreferences(PREF_USER__INGREDIENT, MODE_PRIVATE);
-                            SharedPreferences.Editor editor = sharedPreferencesUserIngredient.edit();
+                            editor = sharedPreferencesUserIngredient.edit();
                             editor.putString("ingredientList", jsonArray.toString());
                             editor.commit();
 
@@ -195,20 +190,26 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    // 재료 재고 목록 가져와 파싱 - 수정 필요
+    // 재료 재고 목록 가져와 파싱
     private void getMyGroceryList() {
         try {
             // json 객체 생성 및 파싱
             for(int i = 0; i < jsonArray.length(); i++) {
                 JSONObject cook = (JSONObject) jsonArray.get(i);
                 switch (cook.getString("freshness")) {
-                    case "신선": fresh_first++; break;
-                    case "양호": fresh_second++; break;
-                    case "위험": fresh_third++; break;
-                    default: fresh_fourth++; break;
+                    case "양호": fresh_first++; break;
+                    case "위험": fresh_second++; break;
+                    default: fresh_third++; break;
                 }
             }
             setCircleText(true);
+            // 재료 개수 저장
+            editor = sharedPreferencesUserIngredient.edit();
+            editor.putInt("freshLevel1", fresh_first);
+            editor.putInt("freshLevel2", fresh_second);
+            editor.putInt("freshLevel3", fresh_third);
+            editor.putInt("ingredientCountSum", fresh_first+fresh_second+fresh_third);
+            editor.commit();
         }
         catch (JSONException e) {
             e.printStackTrace();
@@ -218,6 +219,8 @@ public class MainActivity extends AppCompatActivity {
     // 메인 화면 재료 현황
     private void setCircleText(boolean checkLogin) {
         ConstraintLayout textInCircle = findViewById(R.id.change_circle_text);
+        textInCircle.removeAllViews();
+
         LayoutInflater inflater = (LayoutInflater) getSystemService(getApplicationContext().LAYOUT_INFLATER_SERVICE);
         if(checkLogin) {
             // 로그인 되면
@@ -226,11 +229,11 @@ public class MainActivity extends AppCompatActivity {
             LinearLayout linearLayout = (LinearLayout) inflater.inflate(R.layout.main_circle_login_complete_layout, null, false);
             TextView first = linearLayout.findViewById(R.id.level1);
             TextView second = linearLayout.findViewById(R.id.level2);
-            TextView third = linearLayout.findViewById(R.id.level4);
+            TextView third = linearLayout.findViewById(R.id.level3);
 
-            first.setText(String.format("신선 - %d", fresh_first));
-            second.setText(String.format("양호 - %d", fresh_second));
-            third.setText(String.format("위험 - %d", fresh_third));
+            first.setText("양호 - "+Integer.toString(fresh_first));
+            second.setText("위험 - "+Integer.toString(fresh_second));
+            third.setText("만료 - "+Integer.toString(fresh_third));
 
             textInCircle.addView(linearLayout);
         }
@@ -329,13 +332,5 @@ public class MainActivity extends AppCompatActivity {
             intent.putExtra( "img", imageBitmap);
             startActivity(intent);
         }
-    }
-
-    public String todayDate() {
-        long now = System.currentTimeMillis();
-        Date date = new Date(now);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyMMdd_HHmmss");
-
-        return dateFormat.format(date);
     }
 }

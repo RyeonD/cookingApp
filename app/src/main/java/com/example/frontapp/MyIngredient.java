@@ -34,11 +34,8 @@ public class MyIngredient {
 
     public Drawable getBackground(Context context){
         switch (freshness) {
-            case "신선": {
-                return ContextCompat.getDrawable(context, R.drawable.ingredient_corner_level1);
-            }
             case "양호": {
-                return ContextCompat.getDrawable(context, R.drawable.ingredient_corner_level2);
+                return ContextCompat.getDrawable(context, R.drawable.ingredient_corner_level1);
             }
             case "위험": {
                 return ContextCompat.getDrawable(context, R.drawable.ingredient_corner_level3);

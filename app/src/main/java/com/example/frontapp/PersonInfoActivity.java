@@ -1,6 +1,7 @@
 package com.example.frontapp;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +21,8 @@ public class PersonInfoActivity extends AppCompatActivity {
     TextView expiration_date;
     TextView allergy;
     TextView disease;
+    private static final String PREF_USER_ID = "MyAutoLogin";
+    private static final String PREF_USER_INGREDIENT = "MyIngredientList";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -37,16 +40,6 @@ public class PersonInfoActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        // 검색 페이지로
-//        findViewById(R.id.info_search_btn).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                intent = new Intent(getApplicationContext(), MainActivity.class);
-//                intent.putExtra("camera", true);
-//                startActivity(intent);
-//            }
-//        });
 
         // 설정 페이지로
         findViewById(R.id.setting_btn).setOnClickListener(new View.OnClickListener() {
@@ -87,11 +80,16 @@ public class PersonInfoActivity extends AppCompatActivity {
         disease = findViewById(R.id.disease);
 
         // 페이지 입력
-        user_image.setImageResource(R.drawable.test_img);
-        user_name.setText("나요비");
-        user_id.setText("yobi@kmr.com");
-        keep_grocery.setText("6");
-        expiration_date.setText("2");
+        user_image.setImageResource(R.drawable.profile_1);
+
+        SharedPreferences sharedPreferencesUser = getSharedPreferences(PREF_USER_ID, MODE_PRIVATE);
+        user_name.setText(sharedPreferencesUser.getString("UserName",""));
+        user_id.setText(sharedPreferencesUser.getString("UserId",""));
+
+        SharedPreferences sharedPreferencesUserIngredient = getSharedPreferences(PREF_USER_INGREDIENT, MODE_PRIVATE);
+        keep_grocery.setText(Integer.toString(sharedPreferencesUserIngredient.getInt("ingredientCountSum", 0)));
+        expiration_date.setText(Integer.toString(sharedPreferencesUserIngredient.getInt("freshLevel3", 0)));
+
         allergy.setText("3");
         disease.setText("2");
     }

@@ -16,26 +16,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
+        <ImageView
             android:id="@+id/delete_btn"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginEnd="10dp"
-            android:layout_marginRight="10dp"
             android:layout_weight="1"
-            android:background="@drawable/small_button"
-            android:fontFamily="@font/bmhannap_pro"
-            android:gravity="center"
-            android:paddingLeft="5dp"
-            android:paddingTop="2dp"
-            android:paddingRight="5dp"
-            android:paddingBottom="2dp"
-            android:text="삭제"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp" />
+            app:srcCompat="@drawable/baseline_delete_black_18dp" />
 
         <TextView
             android:id="@+id/grocery_list_in_photo_text"
@@ -53,26 +39,12 @@
             android:textSize="30sp"
             android:textStyle="bold" />
 
-        <TextView
+        <ImageView
             android:id="@+id/add_btn"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginStart="10dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginEnd="20dp"
-            android:layout_marginRight="20dp"
             android:layout_weight="1"
-            android:background="@drawable/small_button"
-            android:fontFamily="@font/bmhannap_pro"
-            android:gravity="center"
-            android:paddingLeft="5dp"
-            android:paddingTop="2dp"
-            android:paddingRight="5dp"
-            android:paddingBottom="2dp"
-            android:text="추가"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp" />
+            app:srcCompat="@drawable/baseline_add_black_24dp" />
 
     </LinearLayout>
 

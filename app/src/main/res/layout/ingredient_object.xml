@@ -7,8 +7,8 @@
 
     <TextView
         android:id="@+id/ingredient_object_name"
-        android:layout_width="140dp"
-        android:layout_height="160dp"
+        android:layout_width="90dp"
+        android:layout_height="105dp"
         android:layout_margin="5dp"
         android:background="@drawable/ingredient_corner_level1"
         android:fontFamily="@font/bmhannap_pro"

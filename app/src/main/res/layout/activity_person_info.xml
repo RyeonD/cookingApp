@@ -56,7 +56,7 @@
         android:id="@+id/user_info_layer"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="#000000"
+        android:background="#B0BCCAD6"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/constraintLayout4">
@@ -69,7 +69,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:srcCompat="@drawable/test_img" />
+            tools:srcCompat="@drawable/profile_1" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -85,8 +85,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/bmhannap_pro"
+                android:gravity="center"
                 android:text="user_name"
-                android:textColor="#FFFFFF"
+                android:textColor="#000000"
                 android:textSize="18sp" />
 
             <TextView
@@ -94,8 +95,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/bmhannap_pro"
+                android:gravity="center"
                 android:text="user_id"
-                android:textColor="#FDFDFD"
+                android:textColor="#000000"
                 android:textSize="18sp" />
         </LinearLayout>
 
@@ -116,7 +118,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:fontFamily="@font/bmhannap_pro"
-            android:text="재료 현황"
+            android:text="나의 재료 현황"
             android:textColor="#040404"
             android:textSize="20sp"
             android:textStyle="bold"
@@ -171,8 +173,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:fontFamily="@font/bmhannap_pro"
-                    android:text="TextView"
-                    android:textColor="#040404" />
+                    android:text="0"
+                    android:textColor="#040404"
+                    android:textSize="18sp" />
 
             </LinearLayout>
 
@@ -192,7 +195,7 @@
                     android:layout_marginBottom="15dp"
                     android:fontFamily="@font/bmhannap_pro"
                     android:text="유통 기한 만료"
-                    android:textColor="#000000"
+                    android:textColor="#FF0000"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -202,8 +205,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:fontFamily="@font/bmhannap_pro"
-                    android:text="TextView"
-                    android:textColor="#040404" />
+                    android:text="0"
+                    android:textColor="#FF0000"
+                    android:textSize="18sp" />
 
             </LinearLayout>
 
@@ -293,8 +297,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:fontFamily="@font/bmhannap_pro"
-                    android:text="TextView"
-                    android:textColor="#040404" />
+                    android:text="0"
+                    android:textColor="#040404"
+                    android:textSize="18sp" />
 
             </LinearLayout>
 
@@ -324,8 +329,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:fontFamily="@font/bmhannap_pro"
-                    android:text="TextView"
-                    android:textColor="#040404" />
+                    android:text="0"
+                    android:textColor="#040404"
+                    android:textSize="18sp" />
 
             </LinearLayout>
 

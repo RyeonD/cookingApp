@@ -6,10 +6,6 @@ import android.content.SharedPreferences;
 public class LoginManager {
     private static final String PREF_USER_ID = "MyAutoLogin";
 
-    public LoginManager() {
-
-    }
-
     // 모든 엑티비티에서 인스턴스를 얻기위함
     static SharedPreferences getSharedPreferences(Context ctx) {
         // return PreferenceManager.getDefaultSharedPreferences(ctx);

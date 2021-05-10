@@ -177,8 +177,9 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
         Log.d("imgPath" , getCacheDir() + "/" + fileName);
         return fileName;
     }
+
     // s3 upload
-    private void uploadWithTransferUtility(String fileName) {
+    public void uploadWithTransferUtility(String fileName) {
 
         CognitoCachingCredentialsProvider credentialsProvider = new CognitoCachingCredentialsProvider(
                 getApplicationContext(),
