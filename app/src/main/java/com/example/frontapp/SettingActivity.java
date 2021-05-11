@@ -12,7 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 public class SettingActivity extends AppCompatActivity {
     private static String TAG = "SettingActivity";
     private static final String PREF_USER_ID = "MyAutoLogin";
+    private static final String PREF_USER_INGREDIENT = "MyIngredientList";
     SharedPreferences sharedPreferences;
+    SharedPreferences sharedPreferencesUserIngredient;
     SharedPreferences.Editor editor;
 
     @Override
@@ -25,6 +27,11 @@ public class SettingActivity extends AppCompatActivity {
             public void onClick(View v) {
                 sharedPreferences = getSharedPreferences(PREF_USER_ID, MODE_PRIVATE);
                 editor = sharedPreferences.edit();
+                editor.clear();
+                editor.commit();
+
+                sharedPreferencesUserIngredient = getSharedPreferences(PREF_USER_INGREDIENT, MODE_PRIVATE);
+                editor = sharedPreferencesUserIngredient.edit();
                 editor.clear();
                 editor.commit();
 

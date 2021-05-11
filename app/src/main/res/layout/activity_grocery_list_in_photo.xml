@@ -33,7 +33,6 @@
             android:layout_marginRight="10dp"
             android:fontFamily="@font/bmhannap_pro"
             android:gravity="center"
-            android:padding="15dp"
             android:text="인식된 재료 목록"
             android:textColor="#85B7E4"
             android:textSize="30sp"
@@ -49,6 +48,30 @@
     </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout15"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/grocery_list_in_photo_layout">
+
+        <TextView
+            android:id="@+id/textView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/bmhannap_pro"
+            android:gravity="center"
+            android:text="인식된 재료들 입니다.\n상단의 버튼으로 삭제 또는 추가가 가능합니다."
+            android:textColor="#838383"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -58,7 +81,7 @@
         android:paddingBottom="7dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/grocery_list_in_photo_layout">
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout15">
 
         <LinearLayout
             android:id="@+id/linearLayout12"

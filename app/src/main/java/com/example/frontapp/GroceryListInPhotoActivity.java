@@ -1,10 +1,12 @@
 package com.example.frontapp;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -68,6 +70,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
     ListView listView;
     private Intent intent, image_intent;
     private File imgFile;
+    private CheckTypesTask task;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -89,6 +92,9 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
 //        if(jsonObject != null) {
 //            outputTable();
 //        }
+
+        task = new CheckTypesTask();
+        task.execute();
 
         long time = System.currentTimeMillis();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
@@ -157,6 +163,37 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
         });
     }
 
+    private class CheckTypesTask extends AsyncTask<String, Void, String> {
+        ProgressDialog progressDialog = new ProgressDialog(GroceryListInPhotoActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("이미지에서 재료를 인식중입니다");
+
+            // show dialog
+            progressDialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            try {
+                while(true) {
+                    Thread.sleep(2000);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            progressDialog.dismiss();
+            super.onPostExecute(s);
+        }
+    }
 
     // bitmap to jpg
     public String saveBitmapToJpg(Bitmap bitmap , String name) {
@@ -254,6 +291,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
             if (jsonObject.getString("success").equals("true"))
             {
                 if(jsonObject != null) {
+                    task.onPostExecute("종료");
                     outputTable();
                 }
                 imgFile.delete();

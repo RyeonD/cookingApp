@@ -1,11 +1,13 @@
 package com.example.frontapp;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -91,9 +93,10 @@ public class MyIngredientListActivity extends AppCompatActivity {
     private ArrayList<String> deleteIngredient;
     private ArrayList<String> addIngredient;
 
-    private EditText editText;
     private ArrayAdapter<CharSequence> adapter;
     private Spinner spinner;
+
+    private CheckTypesTask task;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -105,6 +108,9 @@ public class MyIngredientListActivity extends AppCompatActivity {
         sharedPreferencesUser = getSharedPreferences(PREF_USER_ID, MODE_PRIVATE);
         sharedPreferencesUserIngredient = getSharedPreferences(PREF_USER_INGREDIENT, MODE_PRIVATE);
         editor = sharedPreferencesUserIngredient.edit();
+
+        task = new CheckTypesTask();
+
         setOriginalPage();
     }
 
@@ -638,6 +644,8 @@ public class MyIngredientListActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == REQUEST_TAKE_PHOTO) {
+            task.execute();
+
             Bundle imageBundle = data.getExtras();
             Bitmap imageBitmap = (Bitmap) imageBundle.get("data");
 
@@ -747,7 +755,7 @@ public class MyIngredientListActivity extends AppCompatActivity {
             if (jsonObject.getString("success").equals("true"))
             {
                 if(jsonObject != null) {
-                    Log.e(TAG, jsonObject.toString());
+                    task.onPostExecute("종료");
                     ingredientListInPhoto();
                 }
                 imgFile.delete();
@@ -767,11 +775,43 @@ public class MyIngredientListActivity extends AppCompatActivity {
             String name = iterator.next().toString();
             if(!name.contains("success")) {
                 addIngredient.add(name);
-                ingredientList.add(new MyIngredient(name, "신선"));
+                ingredientList.add(new MyIngredient(name, "양호"));
             }
         }
 
         // 추가된 재료들 화면에 띄우기
         outputChangePage();
+    }
+
+    private class CheckTypesTask extends AsyncTask<String, Void, String> {
+        ProgressDialog progressDialog = new ProgressDialog(MyIngredientListActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("이미지에서 재료를 인식중입니다.");
+
+            // show dialog
+            progressDialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            try {
+                while(true) {
+                    Thread.sleep(2000);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            progressDialog.dismiss();
+            super.onPostExecute(s);
+        }
     }
 }

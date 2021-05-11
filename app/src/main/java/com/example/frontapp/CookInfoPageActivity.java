@@ -66,14 +66,6 @@ public class CookInfoPageActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
-
-        // 검색 버튼 동작
-        findViewById(R.id.cook_info_search_btn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), "검색 버튼을 다른 걸로 바꿀 수 있도록 해보자", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     // intent로 데이터 넘겨 받아온 것 변수에 정의

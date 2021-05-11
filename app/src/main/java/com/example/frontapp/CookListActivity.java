@@ -1,8 +1,10 @@
 package com.example.frontapp;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.AssetManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -47,6 +49,7 @@ public class CookListActivity extends AppCompatActivity {
     String cook_img;
     String cook_ingredients;
     String[] ingredientList;
+    private CheckTypesTask task;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -63,6 +66,9 @@ public class CookListActivity extends AppCompatActivity {
         // 요리 리스트 출력
         cookList = findViewById(R.id.scroll_view_layout);
 
+        task = new CheckTypesTask();
+        task.execute();
+
         // Local 추천 요리 가져오기
 //        try {
 //            getLocalCookList();
@@ -72,6 +78,38 @@ public class CookListActivity extends AppCompatActivity {
 
         // 서버에서 추천 요리 받아오기
         getCookList();
+    }
+
+    private class CheckTypesTask extends AsyncTask<String, Void, String> {
+        ProgressDialog progressDialog = new ProgressDialog(CookListActivity.this);
+
+        @Override
+        protected void onPreExecute() {
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setMessage("선택된 재료들로 요리를 검색중입니다.");
+
+            // show dialog
+            progressDialog.show();
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+            try {
+                while(true) {
+                    Thread.sleep(2000);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            progressDialog.dismiss();
+            super.onPostExecute(s);
+        }
     }
 
     // 파일 가져오기 - 서버 연결 안 되어있을 때
@@ -122,6 +160,7 @@ public class CookListActivity extends AppCompatActivity {
                         JSONObject jsonObject = new JSONObject( jsonResponse );
 
                         if (jsonObject.getString("success").equals("true")) {
+                            task.onPostExecute("종료");
                             jsonArray = jsonObject.getJSONArray("recipe_list");
                             // 요리 리스트 출력
                             cookList = findViewById(R.id.scroll_view_layout);

@@ -9,7 +9,7 @@
     <LinearLayout
         android:id="@+id/grocery_selection_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -25,12 +25,35 @@
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
             android:fontFamily="@font/bmhannap_pro"
-            android:text="인식된 재료 목록"
+            android:text="주재료 선택"
             android:textColor="#85B7E4"
             android:textSize="30sp"
             android:textStyle="bold" />
 
     </LinearLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout14"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/grocery_selection_layout">
+
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/bmhannap_pro"
+            android:text="주재료로 삼고 싶은 재료를 선택해주세요.\n(1개 이상 3개 이하로 선택 가능합니다.)"
+            android:textColor="#838383"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout3"
@@ -42,7 +65,7 @@
         android:paddingBottom="7dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/grocery_selection_layout">
+        app:layout_constraintTop_toBottomOf="@+id/constraintLayout14">
 
         <LinearLayout
             android:id="@+id/linearLayout12"

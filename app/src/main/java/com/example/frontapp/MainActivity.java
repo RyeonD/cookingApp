@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
 
     private boolean autoLoginCheck;
 
-    private static final String PREF_USER__INGREDIENT = "MyIngredientList";
+    private static final String PREF_USER_INGREDIENT = "MyIngredientList";
     SharedPreferences sharedPreferencesUserIngredient;
 
     SharedPreferences.Editor editor;
@@ -76,6 +76,9 @@ public class MainActivity extends AppCompatActivity {
         intent = getIntent();
         if(intent.getBooleanExtra("camera", false))
             startCamera();
+
+        sharedPreferencesUser = getSharedPreferences(PREF_USER_ID, MODE_PRIVATE);
+        sharedPreferencesUserIngredient = getSharedPreferences(PREF_USER_INGREDIENT, MODE_PRIVATE);
 
         // search button click 동작 - 카메라 실행
         findViewById(R.id.image_search_btn2).setOnClickListener(new View.OnClickListener() {
@@ -101,8 +104,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         // 자동 로그인 확인
-        loginBtn = findViewById(R.id.login_btn);
-        sharedPreferencesUser = getSharedPreferences(PREF_USER_ID, MODE_PRIVATE);
+        loginBtn = findViewById(R.id.person_page_login_btn);
         fresh_first = 0;
         fresh_second = 0;
         fresh_third = 0;
@@ -161,7 +163,6 @@ public class MainActivity extends AppCompatActivity {
                         if (jsonObject.getString("success").equals("true")) {
                             jsonArray = jsonObject.getJSONArray("result");
 
-                            sharedPreferencesUserIngredient = getSharedPreferences(PREF_USER__INGREDIENT, MODE_PRIVATE);
                             editor = sharedPreferencesUserIngredient.edit();
                             editor.putString("ingredientList", jsonArray.toString());
                             editor.commit();
@@ -265,7 +266,11 @@ public class MainActivity extends AppCompatActivity {
     // 자동 로그인 미체크 시 로그아웃
     public void autoLoginCheck() {
         if(!autoLoginCheck) {
-            SharedPreferences.Editor editor = sharedPreferencesUser.edit();
+            editor = sharedPreferencesUser.edit();
+            editor.clear();
+            editor.commit();
+
+            editor = sharedPreferencesUserIngredient.edit();
             editor.clear();
             editor.commit();
         }
