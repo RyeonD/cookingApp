@@ -3,6 +3,7 @@ package com.example.frontapp;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -50,6 +51,8 @@ public class CookListActivity extends AppCompatActivity {
     String cook_ingredients;
     String[] ingredientList;
     private CheckTypesTask task;
+    private static final String PREF_USER_ID = "MyAutoLogin";
+    SharedPreferences sharedPreferencesUser;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,6 +61,7 @@ public class CookListActivity extends AppCompatActivity {
 
         intent = getIntent();
         ingredientList = intent.getStringArrayExtra("ingredientList");
+        sharedPreferencesUser = getSharedPreferences(PREF_USER_ID, MODE_PRIVATE);
 
         // 검색 결과 페이지 상단에 주재료 보여줌
         TextView textView = findViewById(R.id.main_grocery_list);
@@ -144,7 +148,7 @@ public class CookListActivity extends AppCompatActivity {
     private void getCookList() {
         RetrofitClass retrofitClass = new RetrofitClass(5001);
         CookListInterface api = retrofitClass.retrofit.create(CookListInterface.class);
-        Call<String> call = api.getRecipe(ingredientList[0], ingredientList[1]);
+        Call<String> call = api.getRecipe(sharedPreferencesUser.getString("UserId", ""), ingredientList[0], ingredientList[1]);
         call.enqueue(new Callback<String>()
         {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)

@@ -9,6 +9,7 @@ public interface CookListInterface {
     @FormUrlEncoded
     @POST("recipe")
     Call<String> getRecipe(
+            @Field("user_id") String userId,
             @Field("grocery_list") String groceryList,
             @Field("main_list") String mainList
     );
