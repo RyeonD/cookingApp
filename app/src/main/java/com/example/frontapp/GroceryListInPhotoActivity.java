@@ -59,7 +59,6 @@ import static com.example.frontapp.R.layout.activity_grocery_list_in_photo;
 
 public class GroceryListInPhotoActivity extends AppCompatActivity {
     private static String TAG = "GroceryListInPhotoActivity: ";
-    final static int REQUEST_TAKE_PHOTO = 1;
     private JSONObject jsonObject;
     private LinearLayout groceryTable;
     private int rowId = 0;
@@ -77,7 +76,8 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(activity_grocery_list_in_photo);
         image_intent = getIntent();
-        Bitmap bitmap = (Bitmap) image_intent.getParcelableExtra("img");
+//        Bitmap bitmap = (Bitmap) image_intent.getParcelableExtra("img");
+        String s3_upload_file = image_intent.getStringExtra("img");
 
         groceryTable = findViewById(R.id.scroll_view_add_layout);
 
@@ -96,12 +96,13 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
         task = new CheckTypesTask();
         task.execute();
 
-        long time = System.currentTimeMillis();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-        Date timeInDate = new Date(time);
-        String fileName = sdf.format(timeInDate);
-        String s3_upload_file = saveBitmapToJpg(bitmap, fileName);
+//        long time = System.currentTimeMillis();
+//        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+//        Date timeInDate = new Date(time);
+//        String fileName = sdf.format(timeInDate);
+//        String s3_upload_file = saveBitmapToJpg(bitmap, fileName);
 
+        imgFile = new File(getCacheDir(), s3_upload_file);
         uploadWithTransferUtility(s3_upload_file);
 
         // 재료 항목 삭제 버튼
@@ -197,6 +198,8 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
 
     // bitmap to jpg
     public String saveBitmapToJpg(Bitmap bitmap , String name) {
+
+        bitmap = Bitmap.createScaledBitmap(bitmap, 2000, 1500, true);
 
         File storage = getCacheDir();  //  path = /data/user/0/YOUR_PACKAGE_NAME/cache
         String fileName = name + ".jpg";

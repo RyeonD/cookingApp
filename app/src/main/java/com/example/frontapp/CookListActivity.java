@@ -82,6 +82,17 @@ public class CookListActivity extends AppCompatActivity {
 
         // 서버에서 추천 요리 받아오기
         getCookList();
+
+        findViewById(R.id.home_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                intent = new Intent(getApplicationContext(), MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+
+            }
+        });
     }
 
     private class CheckTypesTask extends AsyncTask<String, Void, String> {

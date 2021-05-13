@@ -10,8 +10,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.ImageDecoder;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,6 +23,7 @@ import android.view.View;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -29,6 +33,13 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -42,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
     static final int REQUEST_CAMERA = 1;
     final static int TAKE_PICTURE = 1;
     final static int REQUEST_TAKE_PHOTO = 1;
+    String mCurrentPhotoPath;
 
     private Intent intent;
     private Button loginBtn;
@@ -69,6 +81,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        getApplicationContext().startService(new Intent(MainActivity.this, SpeechRecognitionService.class));
+
         // 카메라 권한 확인 및 권한 부여
         permissionCheck();
 
@@ -92,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.info_page_btn2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                intent = new Intent(getApplicationContext(), PersonInfoActivity.class);
                 intent = new Intent(getApplicationContext(), PersonInfoActivity.class);
                 startActivity(intent);
             }
@@ -124,6 +137,22 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    private void permissionCheckVoice() {
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.RECORD_AUDIO)!=PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+            //권한을 허용하지 않는 경우
+            Log.e(TAG, "허용X");
+        } else {
+            //권한을 허용한 경우
+            Log.e(TAG, "허용O");
+            try {
+                startService(new Intent(MainActivity.this, SpeechRecognitionService.class));
+            } catch(SecurityException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     // 자동 로그인 확인
@@ -276,14 +305,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // 카메라 실행
-    public void startCamera() {
-        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if(cameraIntent.resolveActivity(getPackageManager()) != null) {
-            startActivityForResult(cameraIntent, TAKE_PICTURE);
-        }
-    }
-
     // 권한 확인 및 권한 부여
     private void permissionCheck() {
         int permission = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
@@ -324,18 +345,134 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    // 카메라 실행
+    public void startCamera() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if(cameraIntent.resolveActivity(getPackageManager()) != null) {
+            File photoFile = null;
+
+            try {
+                photoFile = createImageFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if(photoFile != null) {
+                Uri photoURI = FileProvider.getUriForFile(this, "com.example.frontapp.fileprovider", photoFile);
+                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                startActivityForResult(cameraIntent, TAKE_PICTURE);
+            }
+
+        }
+    }
+
+    // 카메라 촬영 이미지 저장
+    private File createImageFile() throws IOException {
+        String fileName = today();
+
+        File storage = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        File image = File.createTempFile(
+                fileName,
+                ".jpg",
+                storage
+        );
+
+        mCurrentPhotoPath = image.getAbsolutePath();
+        return image;
+    }
+
     // 촬영한 사진 가져와 다음에 올 페이지(액티비티)로 전달
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == REQUEST_TAKE_PHOTO) {
-            Bundle imageBundle = data.getExtras();
-            Bitmap imageBitmap = (Bitmap) imageBundle.get("data");
+//        if(requestCode == REQUEST_TAKE_PHOTO) {
+//            Bundle imageBundle = data.getExtras();
+//            Bitmap imageBitmap = (Bitmap) imageBundle.get("data");
+//
+//            intent = new Intent(getApplicationContext(), GroceryListInPhotoActivity.class);
+//            intent.putExtra( "img", imageBitmap);
+//            startActivity(intent);
+//        }
 
-            intent = new Intent(getApplicationContext(), GroceryListInPhotoActivity.class);
-            intent.putExtra( "img", imageBitmap);
-            startActivity(intent);
+        try {
+            switch (requestCode) {
+                case REQUEST_TAKE_PHOTO: {
+                    if (resultCode == RESULT_OK) {
+                        File file = new File(String.valueOf(mCurrentPhotoPath));
+                        Bitmap bitmap;
+
+                        if (Build.VERSION.SDK_INT >= 29) {
+                            ImageDecoder.Source source = ImageDecoder.createSource(getContentResolver(), Uri.fromFile(file));
+                            try {
+                                bitmap = ImageDecoder.decodeBitmap(source);
+                                if (bitmap != null) {
+                                    // 갤러리 저장해 이미지 확인 코드
+//                                    String imageUri = MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, "사진 저장", "저장 완료");
+//                                    Uri uri = Uri.parse(imageUri);
+//                                    sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, uri));
+//
+//                                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+//                                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+//                                    byte [] bytes = byteArrayOutputStream.toByteArray();
+
+                                    String date = today();
+                                    String s3_upload_file = saveBitmapToJpg(bitmap, date);
+
+                                    intent = new Intent(getApplicationContext(), GroceryListInPhotoActivity.class);
+                                    intent.putExtra( "img", s3_upload_file);
+                                    startActivity(intent);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            try {
+                                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.fromFile(file));
+                                if (bitmap != null) {
+                                    intent = new Intent(getApplicationContext(), GroceryListInPhotoActivity.class);
+                                    intent.putExtra( "img", bitmap);
+                                    startActivity(intent);
+                                }
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+        } catch (Exception error) {
+            error.printStackTrace();
         }
+    }
+    // bitmap to jpg
+    public String saveBitmapToJpg(Bitmap bitmap , String name) {
+
+        bitmap = Bitmap.createScaledBitmap(bitmap, 3000, 2250, true);
+
+        File storage = getCacheDir();  //  path = /data/user/0/YOUR_PACKAGE_NAME/cache
+        String fileName = name + ".jpg";
+        File imgFile = new File(storage, fileName);
+        try {
+            imgFile.createNewFile();
+            FileOutputStream out = new FileOutputStream(imgFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+            out.close();
+        } catch (FileNotFoundException e) {
+            Log.e("saveBitmapToJpg","FileNotFoundException : " + e.getMessage());
+        } catch (IOException e) {
+            Log.e("saveBitmapToJpg","IOException : " + e.getMessage());
+        }
+        Log.d("imgPath" , getCacheDir() + "/" + fileName);
+        return fileName;
+    }
+
+    private String today(){
+        long time = System.currentTimeMillis();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+        Date timeInDate = new Date(time);
+
+        return sdf.format(timeInDate);
     }
 }

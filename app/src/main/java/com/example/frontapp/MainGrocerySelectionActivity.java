@@ -26,6 +26,7 @@ public class MainGrocerySelectionActivity extends AppCompatActivity {
     private String [] groceryList;
     private LinearLayout scrollLayout;
     private int id = 1;
+    String mainList;
 
     // 확인한 재료 목록에서 주재료 선택
     @Override
@@ -55,7 +56,7 @@ public class MainGrocerySelectionActivity extends AppCompatActivity {
             public void onClick(View v) {
                 int cnt = 0;
                 int listCnt = scrollLayout.getChildCount();
-                String mainList = new String(); // 선택 된 checkBox의 목록
+                mainList = new String(); // 선택 된 checkBox의 목록
 
                 // 선택 된 checkBox의 목록 생성(하나의 String으로 생성)
                 for(int i = 1; i <= listCnt; i++) {
@@ -81,6 +82,13 @@ public class MainGrocerySelectionActivity extends AppCompatActivity {
                 Log.e(TAG, mainList.replaceAll("[\\(|\\)]",""));
             }
         });
+    }
+
+    // 뒤로가기로 페이지에 돌아왔을 때
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mainList = null;
     }
 
     // 재료 리스트 출력
