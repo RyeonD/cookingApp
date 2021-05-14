@@ -16,7 +16,7 @@
 
         <ImageButton
             android:id="@+id/recipe_back_btn"
-            android:layout_width="100dp"
+            android:layout_width="70dp"
             android:layout_height="0dp"
             android:layout_marginStart="10dp"
             android:layout_marginLeft="10dp"
@@ -30,16 +30,18 @@
             android:id="@+id/recipe_cook_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
             android:background="#00FFFFFF"
             android:fontFamily="@font/bmhannap_pro"
             android:gravity="center"
             android:text="YOBI"
             android:textColor="#85B7E4"
-            android:textSize="28sp"
+            android:textSize="20sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.27"
+            app:layout_constraintHorizontal_bias="0.34"
             app:layout_constraintStart_toEndOf="@+id/recipe_back_btn"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -59,6 +61,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <ScrollView
+        android:id="@+id/recipe_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"

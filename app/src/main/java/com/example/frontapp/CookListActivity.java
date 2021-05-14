@@ -1,5 +1,6 @@
 package com.example.frontapp;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -53,6 +54,7 @@ public class CookListActivity extends AppCompatActivity {
     private CheckTypesTask task;
     private static final String PREF_USER_ID = "MyAutoLogin";
     SharedPreferences sharedPreferencesUser;
+    boolean dbUpdate;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -60,6 +62,7 @@ public class CookListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cook_list);
 
         intent = getIntent();
+        dbUpdate = intent.getBooleanExtra("update", false);
         ingredientList = intent.getStringArrayExtra("ingredientList");
         sharedPreferencesUser = getSharedPreferences(PREF_USER_ID, MODE_PRIVATE);
 
@@ -157,9 +160,16 @@ public class CookListActivity extends AppCompatActivity {
 
     // 서버에서 추천 요리 리스트 가져오기
     private void getCookList() {
-        RetrofitClass retrofitClass = new RetrofitClass(5001);
+//        RetrofitClass retrofitClass = new RetrofitClass(5001);
+        RetrofitClass retrofitClass = new RetrofitClass("http://6c9b30f19ff1.ngrok.io/");
         CookListInterface api = retrofitClass.retrofit.create(CookListInterface.class);
-        Call<String> call = api.getRecipe(sharedPreferencesUser.getString("UserId", ""), ingredientList[0], ingredientList[1]);
+        Call<String> call = null;
+        if(dbUpdate) {
+            call = api.getRecipe(sharedPreferencesUser.getString("UserId", ""), ingredientList[0], ingredientList[1]);
+        }
+        else {
+            call = api.getRecipe(sharedPreferencesUser.getString("", ""), ingredientList[0], ingredientList[1]);
+        }
         call.enqueue(new Callback<String>()
         {
             @RequiresApi(api = Build.VERSION_CODES.KITKAT)

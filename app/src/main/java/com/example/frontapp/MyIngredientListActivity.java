@@ -151,6 +151,7 @@ public class MyIngredientListActivity extends AppCompatActivity {
                 for(int i = 0; i < groceryList.length; i++) {
                     groceryList[i] = ingredientList.get(i).getName();
                 }
+                intent.putExtra("update", false);
                 intent.putExtra("groceryList", groceryList);
                 startActivity(intent);
             }
@@ -443,7 +444,8 @@ public class MyIngredientListActivity extends AppCompatActivity {
     private void getIngredientList() {
         ingredientList = new ArrayList<>();
         // 데이터 가져오기
-        RetrofitClass retrofitClass = new RetrofitClass(5000);
+//        RetrofitClass retrofitClass = new RetrofitClass(5000);
+        RetrofitClass retrofitClass = new RetrofitClass("http://9c169bd484d1.ngrok.io/");
         MainInterface api = retrofitClass.retrofit.create(MainInterface.class);
         Log.e(TAG, "확인"+getUserId());
         Call<String> call = api.getUserId(getUserId());
@@ -501,7 +503,8 @@ public class MyIngredientListActivity extends AppCompatActivity {
     private void getChangeIngredientList() {
         ingredientList = new ArrayList<>();
         // 데이터 가져오기
-        RetrofitClass retrofitClass = new RetrofitClass(5000);
+//        RetrofitClass retrofitClass = new RetrofitClass(5000);
+        RetrofitClass retrofitClass = new RetrofitClass("http://f645f2ae0f52.ngrok.io/");
         MyIngredientList api = retrofitClass.retrofit.create(MyIngredientList.class);
         Log.e(TAG, "수정 목록 보내기"+getUserId());
 
@@ -559,7 +562,8 @@ public class MyIngredientListActivity extends AppCompatActivity {
     // DB에 신선도에 대한 재료 정보가 있는지 확인
     private void checkIngredient(String ingredient) {
         // 데이터 가져오기
-        RetrofitClass retrofitClass = new RetrofitClass(5000);
+//        RetrofitClass retrofitClass = new RetrofitClass(5000);
+        RetrofitClass retrofitClass = new RetrofitClass("http://9c169bd484d1.ngrok.io/");
         MyIngredientCheck api = retrofitClass.retrofit.create(MyIngredientCheck.class);
         Log.e(TAG, ingredient);
         Call<String> call = api.getCheckIngredient(ingredient);

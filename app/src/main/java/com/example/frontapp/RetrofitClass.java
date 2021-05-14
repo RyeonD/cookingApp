@@ -1,5 +1,7 @@
 package com.example.frontapp;
 
+import android.util.Log;
+
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -33,6 +35,7 @@ public class RetrofitClass {
                 .build();
         retrofit = new Retrofit.Builder()
                 .baseUrl(_URL)
+                .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(okHttpClient)
                 .build();

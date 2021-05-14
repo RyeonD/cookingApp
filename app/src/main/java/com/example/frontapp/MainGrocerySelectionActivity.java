@@ -27,6 +27,7 @@ public class MainGrocerySelectionActivity extends AppCompatActivity {
     private LinearLayout scrollLayout;
     private int id = 1;
     String mainList;
+    boolean dbUpdate;
 
     // 확인한 재료 목록에서 주재료 선택
     @Override
@@ -37,6 +38,8 @@ public class MainGrocerySelectionActivity extends AppCompatActivity {
         intent = getIntent();
         groceryList = intent.getStringArrayExtra("groceryList");
         scrollLayout = findViewById(R.id.scroll_view_add_layout);
+
+        dbUpdate = intent.getBooleanExtra("update", true);
 
         for(String s: groceryList) {
             groceryListOutput(s);
@@ -119,6 +122,7 @@ public class MainGrocerySelectionActivity extends AppCompatActivity {
                             ingredientList[1] = mainList;
 
                             Intent intent = new Intent(getApplicationContext(), CookListActivity.class);
+                            intent.putExtra("update", dbUpdate);
                             intent.putExtra("ingredientList", ingredientList);
                             startActivity(intent);
                         }

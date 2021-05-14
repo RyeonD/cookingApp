@@ -16,6 +16,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -40,6 +41,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -76,12 +78,12 @@ public class MainActivity extends AppCompatActivity {
     private int fresh_second;   // 위험
     private int fresh_third;   // 만료
 
+    TextToSpeech textToSpeech;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        getApplicationContext().startService(new Intent(MainActivity.this, SpeechRecognitionService.class));
 
         // 카메라 권한 확인 및 권한 부여
         permissionCheck();
@@ -172,7 +174,8 @@ public class MainActivity extends AppCompatActivity {
     // 서버에서 나의 재료 재고 목록 가져오기
     private void setPesonalGrocery(String UserId) {
         // 데이터 가져오기
-        RetrofitClass retrofitClass = new RetrofitClass(5000);
+//        RetrofitClass retrofitClass = new RetrofitClass(5000);
+        RetrofitClass retrofitClass = new RetrofitClass("http://f645f2ae0f52.ngrok.io/");
         MainInterface api = retrofitClass.retrofit.create(MainInterface.class);
         Call<String> call = api.getUserId(UserId);
         call.enqueue(new Callback<String>()

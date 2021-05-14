@@ -11,7 +11,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -38,15 +40,19 @@ public class CookRecipePageActivity extends AppCompatActivity {
     private ImageView imageView;
     private TextView textView;
 
-    Bitmap bitmap;
+    private ScrollView scrollView;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cook_recipe_page);
 
-        intent = getIntent();
+        getApplicationContext().startService(new Intent(CookRecipePageActivity.this, SpeechRecognitionService.class));
+
+        scrollView = findViewById(R.id.recipe_scroll_view);
+
         // 데이터 받아옴
+        intent = getIntent();
         getRecipe(intent);
 
         insertRecipe = findViewById(R.id.recipe_list_insert);
@@ -60,6 +66,20 @@ public class CookRecipePageActivity extends AppCompatActivity {
                 onBackPressed();
             }
         });
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        String answer = intent.getStringExtra("action");
+
+        if (answer.contains("뒤로가기")) {
+            onBackPressed();
+        }
+        else if (answer.contains("스크롤다운")) {
+            Log.e(TAG, "스크롤을 내립니다."+scrollView.getScrollY());
+            scrollView.scrollTo(0, scrollView.getScrollY()+460);
+        }
     }
 
     // intent 안 데이터 가져오기
@@ -90,8 +110,6 @@ public class CookRecipePageActivity extends AppCompatActivity {
 
     // 화면에 데이터(내용) 삽입
     private void insertRecipe(String text, String image) {
-        Log.e(TAG, text);
-        Log.e(TAG, image);
         LayoutInflater layoutInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(R.layout.cook_recipe_list, null);
 
@@ -113,6 +131,4 @@ public class CookRecipePageActivity extends AppCompatActivity {
 
         insertRecipe.addView(view);
     }
-
-    // 영상 삽입
 }

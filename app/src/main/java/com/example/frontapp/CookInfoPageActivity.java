@@ -5,11 +5,13 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.speech.SpeechRecognizer;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +22,9 @@ import com.bumptech.glide.Glide;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.Locale;
+
+import static android.speech.tts.TextToSpeech.ERROR;
 
 public class CookInfoPageActivity extends AppCompatActivity {
     private static String TAG = "AppCompatActivity";
@@ -33,14 +38,18 @@ public class CookInfoPageActivity extends AppCompatActivity {
     private String youtubelink;
     private String youtubeimage;
     private LinearLayout videoLinearLayout;
-    private SpeechRecognizer speechRecognizer;
+    private ScrollView scrollView;
+    TextToSpeech textToSpeech;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cook_info_page);
 
-        Log.e(TAG, "성공");
+        getApplicationContext().startService(new Intent(CookInfoPageActivity.this, SpeechRecognitionService.class));
+
+        scrollView = findViewById(R.id.info_scroll_view);
+
         intent = getIntent();
 
         // 요리 정보들 가져옴
@@ -48,6 +57,15 @@ public class CookInfoPageActivity extends AppCompatActivity {
 
         // 요리 정보 출력
         outputCookInfo();
+
+//        textToSpeech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+//            @Override
+//            public void onInit(int status) {
+//                if(status != android.speech.tts.TextToSpeech.ERROR) {
+//                    textToSpeech.setLanguage(Locale.KOREAN);
+//                }
+//            }
+//        });
 
         findViewById(R.id.recipe_btn).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,6 +83,7 @@ public class CookInfoPageActivity extends AppCompatActivity {
         findViewById(R.id.cook_info_back_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                SpeechRecognitionService.endYobi();
                 onBackPressed();
             }
         });
@@ -73,6 +92,7 @@ public class CookInfoPageActivity extends AppCompatActivity {
         findViewById(R.id.cook_info_text).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                SpeechRecognitionService.onDestory();
                 intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -80,6 +100,43 @@ public class CookInfoPageActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(textToSpeech != null){
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+            textToSpeech = null;
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        String answer = intent.getStringExtra("action");
+
+        if(answer.contains("성공")) {
+            Log.e(TAG, answer);
+            Toast.makeText(getApplicationContext(), "안녕하세요. 말씀해주세요.", Toast.LENGTH_LONG).show();
+
+            getApplicationContext().stopService(new Intent(CookInfoPageActivity.this, SpeechRecognitionService.class));
+//            getApplicationContext().startService(new Intent(CookInfoPageActivity.this, SpeechRecognitionService.class));
+        }
+        else if(answer.contains("레시피")) {
+            Log.e(TAG, answer);
+            intent = new Intent(getApplicationContext(), CookRecipePageActivity.class);
+            intent.putExtra("name", name);
+            intent.putExtra("recipe", recipe);
+            intent.putExtra("recipe_imagelink", recipe_imagelink);
+            startActivity(intent);
+        }
+        else if (answer.contains("스크롤다운")) {
+            Log.e(TAG, "스크롤을 내립니다."+scrollView.getScrollY());
+            scrollView.scrollTo(0, scrollView.getBottom());
+        }
+
+        super.onNewIntent(intent);
     }
 
     // intent로 데이터 넘겨 받아온 것 변수에 정의
@@ -161,4 +218,5 @@ public class CookInfoPageActivity extends AppCompatActivity {
             }
         });
     }
+
 }

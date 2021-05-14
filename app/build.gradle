@@ -61,4 +61,5 @@ dependencies {
     implementation 'com.amazonaws:aws-android-sdk-s3:2.13.5'
     fileTree(include: ['*.jar'], dir: 'libs')
     fileTree(include: ['*.jar'], dir: 'app/libs')
+    implementation "com.squareup.retrofit2:converter-scalars:2.1.0"
 }

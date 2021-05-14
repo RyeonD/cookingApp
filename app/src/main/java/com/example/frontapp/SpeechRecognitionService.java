@@ -1,6 +1,8 @@
 package com.example.frontapp;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -20,11 +22,13 @@ import android.speech.RecognitionListener;
 import android.speech.RecognitionService;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.speech.tts.TextToSpeech;
 import android.telecom.Call;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.TextView;
 
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
@@ -37,6 +41,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.Logger;
 
@@ -63,8 +68,19 @@ public class SpeechRecognitionService extends RecognitionService {
     protected AudioManager mAudioManager;
     Intent itIntent;//음성인식 Intent
     boolean end = false;
+    public static boolean yobi = false;
 
-    String CHANNEL_ID = "channel_1";
+    Intent showIntent;
+
+    TextToSpeech textToSpeech;
+
+    public static void endYobi() {
+        yobi = false;
+    }
+
+    public static void onDestory() {
+        onDestory();
+    }
 
     // 서비스 처음 실행 시
     @Override
@@ -90,12 +106,28 @@ public class SpeechRecognitionService extends RecognitionService {
         super.onDestroy();
 
         end = true;
-        mSrRecognizer.destroy();
+        if(mSrRecognizer != null) {
+            mSrRecognizer.destroy();
+        }
 
         if(mAudioManager != null) {
             mAudioManager.adjustStreamVolume(AudioManager.STREAM_MUSIC, AudioManager.ADJUST_UNMUTE, 0);
         }
+
         Log.e(TAG, "onDestory");
+
+        textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status!=android.speech.tts.TextToSpeech.ERROR) {
+                    textToSpeech.setLanguage(Locale.KOREAN);
+                }
+            }
+        });
+
+        textToSpeech.setPitch(1.0f); //1.5톤 올려서
+        textToSpeech.setSpeechRate(0.9f); //1배속으로 읽기
+        textToSpeech.speak("음성출력합니다", TextToSpeech.QUEUE_FLUSH, null);
     }
 
     // 서비스 다른 곳에서 실행 시
@@ -201,9 +233,54 @@ public class SpeechRecognitionService extends RecognitionService {
             ArrayList<String> mResult = results.getStringArrayList(key);
             final String[] rs = new String[mResult.size()];
             mResult.toArray(rs);
-            Log.e(TAG, "결과>>>>>>>> "+rs[0]);
-            mBoolVoiceRecoStarted = false;
-            getApplicationContext().startService(new Intent(getApplicationContext(), SpeechRecognitionService.class));
+            Log.e(TAG, "결과 + " + yobi + ">>>>>>>> "+rs[0]);
+
+            if(yobi) {
+
+                if(rs[0].contains("레시피")) {
+                    Log.e(TAG, "요비가 레시피를 검색 중입니다.");
+                    setShowIntent(getCurrentActivity());
+                    speechAction("레시피");
+
+                }
+                else if(rs[0].contains("종료")) {
+                    yobi = false;
+                }
+                else if(rs[0].contains("뒤로") || rs[0].contains("재료")) {
+                    Log.e(TAG, "요비가 뒤로가기를 합니다.");
+
+                    setShowIntent(getCurrentActivity());
+                    speechAction("뒤로가기");
+                }
+                else if(rs[0].contains("내려") || rs[0].contains("아래") || rs[0].contains("밑")) {
+                    Log.e(TAG, "요비가 화면을 움직입니다.");
+
+                    setShowIntent(getCurrentActivity());
+                    speechAction("스크롤다운");
+                }
+                else {
+                    Log.e(TAG, "다시 말씀해주세요");
+                    mBoolVoiceRecoStarted = false;
+                    getApplicationContext().startService(new Intent(getApplicationContext(), SpeechRecognitionService.class));
+                }
+            }
+            else {
+                if(rs[0].contains("요비")) {
+                    Log.e(TAG, "요비의 음성인식 기능이 켜졌습니다. 음성 인식 기능을 종료하시려면 종료라고 말씀해주세요.");
+
+                    yobi = true;
+
+                    setShowIntent(getCurrentActivity());
+                    speechAction("성공");
+
+                    mBoolVoiceRecoStarted = false;
+                }
+                else {
+                    mBoolVoiceRecoStarted = false;
+                    getApplicationContext().startService(new Intent(getApplicationContext(), SpeechRecognitionService.class));
+                }
+
+            }
         }
 
         @Override
@@ -273,5 +350,30 @@ public class SpeechRecognitionService extends RecognitionService {
 
         }
     };
+
+    private String getCurrentActivity() {
+        ActivityManager manager = (ActivityManager )getSystemService(Activity.ACTIVITY_SERVICE);
+
+        List<ActivityManager.RunningTaskInfo> list = manager.getRunningTasks(1);
+        ActivityManager.RunningTaskInfo info = list.get(0);
+
+        return info.topActivity.getClassName();
+    }
+
+    private void setShowIntent(String activityName) {
+        Log.e(TAG, activityName);
+        if(activityName.contains("CookInfoPageActivity")) {
+            showIntent = new Intent(getApplicationContext(), CookInfoPageActivity.class);
+        }
+        else if(activityName.contains("CookRecipePageActivity")){
+            showIntent = new Intent(getApplicationContext(), CookRecipePageActivity.class);
+        }
+    }
+
+    private void speechAction(String action) {
+        showIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        showIntent.putExtra("action",action);
+        startActivity(showIntent);
+    }
 
 }
