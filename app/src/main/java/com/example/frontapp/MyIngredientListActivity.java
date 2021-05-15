@@ -440,71 +440,12 @@ public class MyIngredientListActivity extends AppCompatActivity {
         return sharedPreferencesUser.getString("UserName", "");
     }
 
-    // DB에서 재료 목록 가져오기
-    private void getIngredientList() {
-        ingredientList = new ArrayList<>();
-        // 데이터 가져오기
-//        RetrofitClass retrofitClass = new RetrofitClass(5000);
-        RetrofitClass retrofitClass = new RetrofitClass("http://9c169bd484d1.ngrok.io/");
-        MainInterface api = retrofitClass.retrofit.create(MainInterface.class);
-        Log.e(TAG, "확인"+getUserId());
-        Call<String> call = api.getUserId(getUserId());
-        call.enqueue(new Callback<String>()
-        {
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
-            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response)
-            {
-                if (response.isSuccessful() && response.body() != null)
-                {
-                    Log.e("onSuccess", response.body());
-
-                    String jsonResponse = response.body();
-                    try {
-                        JSONObject jsonObject = new JSONObject( jsonResponse );
-                        Log.e(TAG, jsonObject.toString());
-                        if (jsonObject.getString("success").equals("true")) {
-                            jsonArray = jsonObject.getJSONArray("result");
-
-                            // 받아온 데이터(나의 재료 재고 목록) 전체 출력
-                            Log.e(TAG, jsonArray.toString());
-
-                            // 받아온 데이터 출력
-                            String name = null;
-                            String freshness = null;
-                            for(int i=0; i < jsonArray.length(); i++) {
-                                jsonObject = jsonArray.getJSONObject(i);
-                                name = jsonObject.get("sortkey").toString();
-                                freshness = jsonObject.get("freshness").toString();
-                                ingredientList.add(new MyIngredient(name, freshness));
-                            }
-                            outputOriginalPage();
-                        } else {
-                            Toast.makeText( getApplicationContext(), "레시피 가져오기에 실패했습니다.", Toast.LENGTH_SHORT ).show();
-                            return;
-                        }
-
-                    } catch (JSONException e) {
-                        Log.e(TAG, "로그 없음");
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t)
-            {
-                Log.e(TAG, "에러 = " + t.getMessage());
-            }
-        });
-    }
-
     // DB에서 재료 목록 가져오기 & 재료 수정
     private void getChangeIngredientList() {
         ingredientList = new ArrayList<>();
         // 데이터 가져오기
-//        RetrofitClass retrofitClass = new RetrofitClass(5000);
-        RetrofitClass retrofitClass = new RetrofitClass("http://f645f2ae0f52.ngrok.io/");
+        RetrofitClass retrofitClass = new RetrofitClass(5000);
+//        RetrofitClass retrofitClass = new RetrofitClass("http://f645f2ae0f52.ngrok.io/");
         MyIngredientList api = retrofitClass.retrofit.create(MyIngredientList.class);
         Log.e(TAG, "수정 목록 보내기"+getUserId());
 
@@ -554,47 +495,6 @@ public class MyIngredientListActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Call<String> call, @NonNull Throwable t)
             {
-                Log.e(TAG, "에러 = " + t.getMessage());
-            }
-        });
-    }
-
-    // DB에 신선도에 대한 재료 정보가 있는지 확인
-    private void checkIngredient(String ingredient) {
-        // 데이터 가져오기
-//        RetrofitClass retrofitClass = new RetrofitClass(5000);
-        RetrofitClass retrofitClass = new RetrofitClass("http://9c169bd484d1.ngrok.io/");
-        MyIngredientCheck api = retrofitClass.retrofit.create(MyIngredientCheck.class);
-        Log.e(TAG, ingredient);
-        Call<String> call = api.getCheckIngredient(ingredient);
-        call.enqueue(new Callback<String>() {
-            @RequiresApi(api = Build.VERSION_CODES.KITKAT)
-            @Override
-            public void onResponse(@NonNull Call<String> call, @NonNull Response<String> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    Log.e("onSuccess", response.body());
-
-                    String jsonResponse = response.body();
-                    try {
-                        JSONObject jsonObject = new JSONObject(jsonResponse);
-                        Log.e(TAG, jsonObject.toString());
-                        if (jsonObject.getString("success").equals("true")) {
-                            ingredientList.add(new MyIngredient(ingredient, "신선"));
-                            addIngredient.add(ingredient);
-                            outputChangePage();
-                        } else {
-                            Toast.makeText(getApplicationContext(), "실패했습니다.", Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                    } catch (JSONException e) {
-                        Log.e(TAG, "로그 없음");
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(@NonNull Call<String> call, @NonNull Throwable t) {
                 Log.e(TAG, "에러 = " + t.getMessage());
             }
         });

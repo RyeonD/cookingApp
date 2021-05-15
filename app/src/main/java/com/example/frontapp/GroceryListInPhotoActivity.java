@@ -290,7 +290,8 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
     {
         try
         {
-            jsonObject = new JSONObject(response);
+            jsonObject = new JSONObject(response.replace("\"",""));
+
             if (jsonObject.getString("success").equals("true"))
             {
                 if(jsonObject != null) {
@@ -347,6 +348,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
                 continue;
             }
             arrayList.add(new Grocery(grocery_name));
+            Log.e(TAG, grocery_name);
         }
 
         // Adapter 생성

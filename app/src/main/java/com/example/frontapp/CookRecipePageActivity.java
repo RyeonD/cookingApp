@@ -47,7 +47,7 @@ public class CookRecipePageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cook_recipe_page);
 
-        getApplicationContext().startService(new Intent(CookRecipePageActivity.this, SpeechRecognitionService.class));
+//        getApplicationContext().startService(new Intent(CookRecipePageActivity.this, SpeechRecognitionService.class));
 
         scrollView = findViewById(R.id.recipe_scroll_view);
 

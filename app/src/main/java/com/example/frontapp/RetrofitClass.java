@@ -11,7 +11,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class RetrofitClass {
 //    "http://yobi-alb-1847592247.ap-northeast-2.elb.amazonaws.com/"
-    protected String URL = "http://yobi-fargate-alb-1729237570.ap-northeast-2.elb.amazonaws.com";
+    protected String URL = "http://13.125.61.230";
     protected OkHttpClient okHttpClient;
     protected Retrofit retrofit;
 

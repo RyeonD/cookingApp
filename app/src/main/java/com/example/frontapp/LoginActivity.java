@@ -63,8 +63,8 @@ public class LoginActivity extends AppCompatActivity {
                 String UserPwd = login_password.getText().toString();
 
                 // 입력된 ID와 PASSWORD 를 서버로 넘겨줘서 결과 반환 받음
-//                RetrofitClass retrofitClass = new RetrofitClass(5002);
-                RetrofitClass retrofitClass = new RetrofitClass("http://4a322c32a20c.ngrok.io/");
+                RetrofitClass retrofitClass = new RetrofitClass(5002);
+//                RetrofitClass retrofitClass = new RetrofitClass("http://4a322c32a20c.ngrok.io/");
                 LoginInterface api = retrofitClass.retrofit.create(LoginInterface.class);
                 Call<String> call = api.getUserLogin(UserId, UserPwd);
                 call.enqueue(new Callback<String>()

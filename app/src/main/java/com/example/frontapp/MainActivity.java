@@ -174,8 +174,8 @@ public class MainActivity extends AppCompatActivity {
     // 서버에서 나의 재료 재고 목록 가져오기
     private void setPesonalGrocery(String UserId) {
         // 데이터 가져오기
-//        RetrofitClass retrofitClass = new RetrofitClass(5000);
-        RetrofitClass retrofitClass = new RetrofitClass("http://f645f2ae0f52.ngrok.io/");
+        RetrofitClass retrofitClass = new RetrofitClass(5000);
+//        RetrofitClass retrofitClass = new RetrofitClass("http://f645f2ae0f52.ngrok.io/");
         MainInterface api = retrofitClass.retrofit.create(MainInterface.class);
         Call<String> call = api.getUserId(UserId);
         call.enqueue(new Callback<String>()

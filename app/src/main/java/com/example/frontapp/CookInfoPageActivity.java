@@ -46,7 +46,7 @@ public class CookInfoPageActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cook_info_page);
 
-        getApplicationContext().startService(new Intent(CookInfoPageActivity.this, SpeechRecognitionService.class));
+//        getApplicationContext().startService(new Intent(CookInfoPageActivity.this, SpeechRecognitionService.class));
 
         scrollView = findViewById(R.id.info_scroll_view);
 
@@ -83,7 +83,7 @@ public class CookInfoPageActivity extends AppCompatActivity {
         findViewById(R.id.cook_info_back_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SpeechRecognitionService.endYobi();
+//                SpeechRecognitionService.endYobi();
                 onBackPressed();
             }
         });
@@ -92,7 +92,7 @@ public class CookInfoPageActivity extends AppCompatActivity {
         findViewById(R.id.cook_info_text).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SpeechRecognitionService.onDestory();
+//                SpeechRecognitionService.onDestory();
                 intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
