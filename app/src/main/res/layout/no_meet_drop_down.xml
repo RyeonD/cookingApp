@@ -14,8 +14,8 @@
         android:id="@+id/no_meet_name"
         android:layout_width="110dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginLeft="30dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginLeft="15dp"
         android:fontFamily="@font/bmhannap_pro"
         android:text="CheckBox"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -31,9 +31,22 @@
         android:fontFamily="@font/bmhannap_pro"
         android:gravity="center"
         android:text="-"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/no_meet_name"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/no_meet_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/bmhannap_pro"
+        android:gravity="center"
+        android:text="TextView"
+        android:textColor="#000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/no_meet_name"
+        app:layout_constraintStart_toEndOf="@+id/no_meet"
         app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

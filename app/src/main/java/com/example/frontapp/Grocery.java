@@ -5,19 +5,25 @@ import android.util.Log;
 public class Grocery {
     String name;
     String part;
+    String count;
     boolean seletced;
     boolean meet;
 
     public Grocery(){}
 
-    public Grocery(String name){
+    public Grocery(String name, String count){
         this.name = name;
+        this.count = count;
         this.seletced = false;
     }
 
     public String getName(){ return name; }
 
     public String getPart(){ return part; }
+
+    public String getCount() {
+        return count;
+    }
 
     public void setName(String name) {
         this.name = name;

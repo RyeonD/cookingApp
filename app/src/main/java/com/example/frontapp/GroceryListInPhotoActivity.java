@@ -1,14 +1,19 @@
 package com.example.frontapp;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +27,8 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
@@ -71,6 +78,11 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
     private File imgFile;
     private CheckTypesTask task;
 
+    SpeechRecognizer mRecognizer;
+    Intent speechIntent;
+    AlertDialog speechAlert;
+    boolean speechOnOff = false;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,29 +93,23 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
 
         groceryTable = findViewById(R.id.scroll_view_add_layout);
 
-//        // json 파일 try-catch
-//        try {
-//            jsonObject = getPhotoResult();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        // json 파일 try-catch
+        try {
+            jsonObject = getPhotoResult();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+         // 가져온 json 파일이 있다면 목록 출력
+        if(jsonObject != null) {
+            outputTable();
+        }
+
+//        task = new CheckTypesTask();
+//        task.execute();
 //
-//         // 가져온 json 파일이 있다면 목록 출력
-//        if(jsonObject != null) {
-//            outputTable();
-//        }
-
-        task = new CheckTypesTask();
-        task.execute();
-
-//        long time = System.currentTimeMillis();
-//        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-//        Date timeInDate = new Date(time);
-//        String fileName = sdf.format(timeInDate);
-//        String s3_upload_file = saveBitmapToJpg(bitmap, fileName);
-
-        imgFile = new File(getCacheDir(), s3_upload_file);
-        uploadWithTransferUtility(s3_upload_file);
+//        imgFile = new File(getCacheDir(), s3_upload_file);
+//        uploadWithTransferUtility(s3_upload_file);`
 
         // 재료 항목 삭제 버튼
         findViewById(R.id.delete_btn).setOnClickListener(new View.OnClickListener() {
@@ -199,7 +205,7 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
     // bitmap to jpg
     public String saveBitmapToJpg(Bitmap bitmap , String name) {
 
-        bitmap = Bitmap.createScaledBitmap(bitmap, 2000, 1500, true);
+        bitmap = Bitmap.createScaledBitmap(bitmap, 12000, 9000, true);
 
         File storage = getCacheDir();  //  path = /data/user/0/YOUR_PACKAGE_NAME/cache
         String fileName = name + ".jpg";
@@ -343,11 +349,17 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
         Iterator<String> keys = jsonObject.keys();
         while (keys.hasNext()) {
             String grocery_name = keys.next().toString();
+            String grocery_count = null;
+            try {
+                grocery_count = jsonObject.get(grocery_name).toString();
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 
             if (grocery_name.equals("success")) {
                 continue;
             }
-            arrayList.add(new Grocery(grocery_name));
+            arrayList.add(new Grocery(grocery_name, grocery_count));
             Log.e(TAG, grocery_name);
         }
 
@@ -377,6 +389,27 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
 
     // 목록 추가 버튼 클릭 시 추가 할 목록 입력하는 dialog 창
     private void groceryAddDialog() {
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(GroceryListInPhotoActivity.this)
+                .setTitle("입력 방법 선택")
+                .setMessage("재료 입력 방법을 선택해주세요.")
+                .setNegativeButton("직접 입력", new DialogInterface.OnClickListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.O)
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        groceryTextAddDialog();
+                    }
+                }).setPositiveButton("음성 인식", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    groceryVoiceAddDialog();
+                }
+            });
+
+        AlertDialog alert = alertBuilder.create();
+        alert.show();
+    }
+
+    private void groceryTextAddDialog() {
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.grocery_list_add_dialog, null);
 
@@ -388,19 +421,144 @@ public class GroceryListInPhotoActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         EditText textPaint = view.findViewById(R.id.edit_grocery_name);
-                        arrayList.add(new Grocery(textPaint.getText().toString()));
+                        arrayList.add(new Grocery(textPaint.getText().toString(), "1"));
                         adapter = new GroceryListAdapter(arrayList);
                         listView.setAdapter(adapter);
                     }
                 }).setNegativeButton("취소", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    Log.e(TAG, "취소할꺼임");
-                }
-            });
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Log.e(TAG, "취소할꺼임");
+                    }
+                });
 
         AlertDialog alert = alertBuilder.create();
         alert.show();
     }
 
+    private void groceryVoiceAddDialog() {
+        speechIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        speechIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, this.getPackageName());
+        speechIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR");
+        mRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+        mRecognizer.setRecognitionListener(listener);
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)!= PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, 1);
+            //권한을 허용하지 않는 경우
+        } else {
+            //권한을 허용한 경우
+            try {
+                mRecognizer.startListening(speechIntent);
+            } catch(SecurityException e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+
+    private RecognitionListener listener = new RecognitionListener() {
+        @Override
+        public void onReadyForSpeech(Bundle params) {
+            System.out.println("onReadyForSpeech.........................");
+            if(!speechOnOff) {
+                speechOnOff = true;
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(GroceryListInPhotoActivity.this)
+                        .setTitle("음성 인식")
+                        .setMessage("추가할 재료를 말씀해주세요.");
+
+                speechAlert = alertBuilder.create();
+                speechAlert.show();
+            }
+        }
+        @Override
+        public void onBeginningOfSpeech() {
+            System.out.println("onBeginningOfSpeech.........................");
+        }
+
+        @Override
+        public void onRmsChanged(float rmsdB) {
+            System.out.println("onRmsChanged.........................");
+        }
+
+        @Override
+        public void onBufferReceived(byte[] buffer) {
+            System.out.println("onBufferReceived.........................");
+        }
+
+        @Override
+        public void onEndOfSpeech() {
+            System.out.println("onEndOfSpeech.........................");
+        }
+
+        @Override
+        public void onError(int error) {
+            speechAlert.dismiss();
+
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(GroceryListInPhotoActivity.this)
+                    .setTitle("음성 인식")
+                    .setMessage("천천히 다시 말씀해주세요.");
+
+            speechAlert = alertBuilder.create();
+            speechAlert.show();
+
+            mRecognizer.startListening(speechIntent);
+        }
+
+        @Override
+        public void onPartialResults(Bundle partialResults) {
+            System.out.println("onPartialResults.........................");
+        }
+
+        @Override
+        public void onEvent(int eventType, Bundle params) {
+            System.out.println("onEvent.........................");
+        }
+
+        @Override
+        public void onResults(Bundle results) {
+            speechAlert.dismiss();
+
+            String key = SpeechRecognizer.RESULTS_RECOGNITION;
+            ArrayList<String> mResult = results.getStringArrayList(key);
+            String[] rs = new String[mResult.size()];
+            mResult.toArray(rs);
+            Log.e(TAG, rs[0]);
+
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(GroceryListInPhotoActivity.this)
+                    .setTitle(rs[0] + " 를(을) 추가하시겠습니까?")
+                    .setPositiveButton("추가", new DialogInterface.OnClickListener() {
+                        @RequiresApi(api = Build.VERSION_CODES.O)
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            arrayList.add(new Grocery(rs[0], "1"));
+                            adapter = new GroceryListAdapter(arrayList);
+                            listView.setAdapter(adapter);
+                        }
+                    }).setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            Log.e(TAG, "취소할꺼임");
+                        }
+                    });
+
+            AlertDialog alertDialog = alertBuilder.create();
+            alertDialog.show();
+
+            speechOnOff = false;
+//            mRecognizer.startListening(speechIntent); //음성인식이 계속 되는 구문이니 필요에 맞게 쓰시길 바람
+        }
+    };
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        if (mRecognizer != null) {
+            mRecognizer.destroy();
+            mRecognizer.cancel();
+            mRecognizer = null;
+            speechOnOff = false;
+        }
+    }
 }

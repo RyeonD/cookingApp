@@ -15,8 +15,8 @@
         android:id="@+id/meet_row_name"
         android:layout_width="110dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="30dp"
-        android:layout_marginLeft="30dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginLeft="15dp"
         android:fontFamily="@font/bmhannap_pro"
         android:text="CheckBox"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -27,15 +27,26 @@
         android:id="@+id/meet_row_spinner"
         android:layout_width="100dp"
         android:layout_height="30dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginLeft="40dp"
+        android:layout_marginStart="30dp"
+        android:layout_marginLeft="30dp"
         android:background="#00FFFFFF"
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/meet_row_name"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_conversion_absoluteHeight="24dp"
         tools:layout_conversion_absoluteWidth="48dp" />
+
+    <TextView
+        android:id="@+id/meet_row_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/bmhannap_pro"
+        android:text="TextView"
+        android:textColor="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/meet_row_spinner"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

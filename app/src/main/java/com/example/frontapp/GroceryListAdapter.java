@@ -26,6 +26,7 @@ public class GroceryListAdapter extends BaseAdapter {
     private ArrayList<Grocery> groceryLists = new ArrayList<Grocery>();     // 재료 리스트(다른 Activity에서 받아옴)
     private CheckBox checkBox;  // 재료 이름 넣을 CheckBox
     private Spinner spinner;    // 고기의 경우 dropdown 이용하여 선택 시 사용할 Spinner
+    private TextView textView;  // 각 재료의 개수 반환
 
     // Spinner에 들어가는 값을 체크하기 위한 것("부위 선택"이면 다음 페이지로 넘어가지 않도록 하기 위한 것)
     private HashMap <String, String> checkSpinnerMap = new HashMap<String, String>();
@@ -73,16 +74,20 @@ public class GroceryListAdapter extends BaseAdapter {
                 convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.meet_drop_down, parent, false);
                 checkBox = convertView.findViewById(R.id.meet_row_name);
                 spinner = makeTableWithSpinner(grocery.getName(), convertView);
+                textView = convertView.findViewById(R.id.meet_row_count);
                 holder.spinner = spinner;
             }
             else {
-                Log.e(TAG, grocery.getName());
+                Log.e(TAG, grocery.getName() + " : " + grocery.getCount());
                 convertView = LayoutInflater.from(parent.getContext()).inflate(R.layout.no_meet_drop_down, parent, false);
                 checkBox = convertView.findViewById(R.id.no_meet_name);
+                textView = convertView.findViewById(R.id.no_meet_count);
             }
+
 
             textViewStyle(checkBox);    // text의 크기, 색깔 등 디자인 조정
             holder.checkBox = checkBox;
+            holder.textView = textView;
             convertView.setTag(holder);
 
             holder.checkBox.setOnClickListener(new View.OnClickListener() {
@@ -102,6 +107,8 @@ public class GroceryListAdapter extends BaseAdapter {
         else {
             holder = (ViewHolder) convertView.getTag();
         }
+
+        holder.textView.setText(grocery.getCount());
 
         holder.checkBox.setText(grocery.getName());
         holder.checkBox.setChecked(grocery.isSeletced());
@@ -145,6 +152,7 @@ public class GroceryListAdapter extends BaseAdapter {
     static class ViewHolder {
         public CheckBox checkBox;
         public Spinner spinner;
+        public TextView textView;
     }
 
     // spinner(드롭다운) 설정
